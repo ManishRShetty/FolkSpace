@@ -14,3 +14,11 @@ response :{
     "message": "Item added successfully",
     "itemId": "690cd3bba57bdc6fab6fb01c"
 }
+
+http://localhost:5000/getItems/690cd373a57bdc6fab6fb01b
+
+response:
+{"items":[
+    {"_id":"690cd3bba57bdc6fab6fb01c","Item_Name":"Toothpaste","Quantity":20,"Expiry_Date":"2025-12-05","createdAt":"2025-11-06T16:58:35.932Z"},
+    {"_id":"690cd8d14c8da96e0b804408","Item_Name":"Brush","Quantity":10,"Expiry_Date":"2025-12-05","createdAt":"2025-11-06T17:20:17.811Z"}]
+}

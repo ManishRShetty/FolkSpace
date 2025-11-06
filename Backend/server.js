@@ -35,10 +35,8 @@ app.post("/create-db", async (req, res) => {
 
     const result = await usersCollection.insertOne({ username, createdAt: new Date() });
     const userId = result.insertedId;
-
     const db = client.db(username);
     await db.createCollection("inventory");
-
     res.status(201).json({ message: `Database '${username}' created`, userId });
   } catch (err) {
     console.error("Error creating DB:", err);
@@ -72,8 +70,20 @@ app.post("/add-item/:userId", async (req, res) => {
   }
 });
 
-app.get('/', (req, res) => {
-  res.json('Hello from Express API');
+app.get("/getItems/:userId", async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const usersDB = client.db("UserDB");
+    const user = await usersDB.collection("users").findOne({ _id: new ObjectId(userId) });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const userDB = client.db(user.username);
+    const items = await userDB.collection("inventory").find().toArray();
+    res.status(200).json({ items });
+  } catch (err) {
+    console.error("Error fetching items:", err);
+    res.status(500).json({ error: "Failed to fetch items" });
+  }
 });
 
 app.listen(PORT, () => {
