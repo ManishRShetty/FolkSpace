@@ -7,7 +7,7 @@ app.use(express.json());
 
 
 app.get('/', (req, res) => {
-  res.send('Hello from Express API ');
+  res.json('Hello from Express API ');
 });
 
 
