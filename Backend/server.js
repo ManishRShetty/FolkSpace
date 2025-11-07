@@ -338,6 +338,91 @@ app.post("/forecast", async (req, res) => {
   }
 });
 
+
+app.post("/top-sold-city", async (req, res) => {
+  const { city, top_sold } = req.body || {};
+
+  if (!city || !Array.isArray(top_sold) || top_sold.length === 0) {
+    return res.status(400).json({
+      error:
+        "Missing required fields: city and top_sold[] (array of { product_name, totalSales, avgPrice?, avgStock?, country? })",
+    });
+  }
+
+  try {
+    const globalDB = client.db("GlobalDB");
+    const collection = globalDB.collection("top_sold_city");
+
+    await collection.createIndex({ city: 1 });
+
+    const normalizedCity = city.trim().toLowerCase();
+
+    await collection.deleteMany({ city: normalizedCity });
+
+    const docs = top_sold.map((item) => ({
+      product_name: item.product_name,
+      totalSales: Number(item.totalSales || 0),
+      avgPrice: Number(item.avgPrice || 0),
+      avgStock: Number(item.avgStock || 0),
+      country: item.country || null,
+      city: normalizedCity,
+      createdAt: new Date(),
+    }));
+
+    await collection.insertMany(docs);
+
+    res.status(201).json({
+      success: true,
+      message: `Top sold items for '${city}' updated successfully`,
+      count: docs.length,
+    });
+  } catch (err) {
+    console.error("Error adding top sold city data:", err);
+    res.status(500).json({ error: "Failed to add top sold city data" });
+  }
+});
+
+
+
+app.get("/top-sold-city/:city", async (req, res) => {
+  const { city } = req.params;
+
+  if (!city) {
+    return res.status(400).json({ error: "City parameter is required" });
+  }
+
+  try {
+    const globalDB = client.db("GlobalDB");
+    const collection = globalDB.collection("top_sold_city");
+
+    const normalizedCity = city.trim().toLowerCase();
+
+    const topSold = await collection
+      .find({ city: normalizedCity })
+      .sort({ totalSales: -1 })
+      .limit(10)
+      .toArray();
+
+    if (!topSold.length) {
+      return res.status(404).json({
+        success: false,
+        message: `No top sold data found for city '${city}'`,
+      });
+    }
+
+    res.json({
+      success: true,
+      city,
+      count: topSold.length,
+      top_sold: topSold,
+    });
+  } catch (err) {
+    console.error("Error fetching top sold city data:", err);
+    res.status(500).json({ error: "Failed to fetch top sold city data" });
+  }
+});
+
+
 app.get("/analytics/:userId", async (req, res) => {
   const { userId } = req.params;
   try {
