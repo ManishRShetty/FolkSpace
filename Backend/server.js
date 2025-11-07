@@ -376,6 +376,83 @@ app.get("/analytics/:userId", async (req, res) => {
 });
 
 
+// POST /distributors
+app.post("/distributors", async (req, res) => {
+  const { location, distributors } = req.body || {};
+
+  if (!location || !Array.isArray(distributors) || distributors.length === 0) {
+    return res.status(400).json({
+      error: "Missing required fields: location and distributors[] (array of { name, contact, email?, address? })",
+    });
+  }
+
+  try {
+    const globalDB = client.db("GlobalDB");
+    const collection = globalDB.collection("distributors");
+
+    await collection.createIndex({ location: 1 });
+
+    const normalizedLocation = location.trim().toLowerCase();
+
+    const docs = distributors.map((d) => ({
+      name: d.name,
+      contact: d.contact,
+      email: d.email || null,
+      address: d.address || null,
+      location: normalizedLocation,
+      createdAt: new Date(),
+    }));
+
+    await collection.insertMany(docs);
+
+    res.status(201).json({
+      success: true,
+      message: `${distributors.length} distributors added successfully for ${location}`,
+    });
+  } catch (err) {
+    console.error("Error adding distributors:", err);
+    res.status(500).json({ error: "Failed to add distributors" });
+  }
+});
+
+
+
+app.get("/distributors/:location", async (req, res) => {
+  const { location } = req.params;
+  if (!location) {
+    return res.status(400).json({ error: "Location parameter is required" });
+  }
+
+  try {
+    const globalDB = client.db("GlobalDB");
+    const collection = globalDB.collection("distributors");
+
+    const normalizedLocation = location.trim().toLowerCase();
+
+    const distributors = await collection
+      .find({ location: normalizedLocation })
+      .sort({ name: 1 })
+      .toArray();
+
+    if (distributors.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: `No distributors found for ${location}`,
+      });
+    }
+
+    res.json({
+      success: true,
+      count: distributors.length,
+      location,
+      distributors,
+    });
+  } catch (err) {
+    console.error("Error fetching distributors:", err);
+    res.status(500).json({ error: "Failed to fetch distributors" });
+  }
+});
+
 app.post("/set-price/:userId", async (req, res) => {
   const { userId } = req.params;
   const { product_name, country, current_price } = req.body || {};
