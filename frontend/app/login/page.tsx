@@ -9,7 +9,36 @@ import { auth } from "@/lib/firebase";
 
 // --- ATTENTION ---
 // Make sure your .env.local file is set up
-const BACK_END_URL = process.env.NEXT_PUBLIC_BACK_END_URL;
+// const BACK_END_URL = process.env.NEXT_PUBLIC_BACK_END_URL;
+const BACK_END_URL = "https://backend-lnia.onrender.com";
+const LOCAL_BACK_END_URL = "http://localhost:5000";
+
+// Helper function to try multiple backend URLs
+const tryBackendCall = async (endpoint: string, options: RequestInit) => {
+  const urls = [BACK_END_URL, LOCAL_BACK_END_URL];
+  
+  for (const baseUrl of urls) {
+    try {
+      console.log(`Trying backend URL: ${baseUrl}${endpoint}`);
+      const response = await fetch(`${baseUrl}${endpoint}`, options);
+      
+      // Check if response is actually JSON
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const textResponse = await response.text();
+        console.error(`Non-JSON response from ${baseUrl}:`, textResponse);
+        continue; // Try next URL
+      }
+      
+      return response; // Success
+    } catch (error) {
+      console.error(`Failed to connect to ${baseUrl}:`, error);
+      continue; // Try next URL
+    }
+  }
+  
+  throw new Error("Failed to connect to any backend server");
+};
 
 export default function LoginPage() {
   // New state for email and password
@@ -34,7 +63,7 @@ export default function LoginPage() {
       // --- LOGIC FROM PREVIOUS STEP (Unchanged) ---
       // 2. Call your backend for ALL users
       try {
-        const response = await fetch(`${BACK_END_URL}/create-db`, {
+        const response = await tryBackendCall("/create-db", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -158,6 +187,20 @@ export default function LoginPage() {
             {error}
           </p>
         )}
+
+        {/* Sign Up Link */}
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Don't have an account?{" "}
+            <button
+              type="button"
+              onClick={() => router.push("/signup")}
+              className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              Sign up here
+            </button>
+          </p>
+        </div>
       </div>
     </main>
   );

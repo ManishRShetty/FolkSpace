@@ -95,10 +95,10 @@ export default function DashboardPage() {
   const userId = 'user_abc_123';
   const userCountry = 'Norway'; // Using this based on your hackathon project
   // --- End Mock User Data ---
-  type SelectedLocation = { name: string } | null;
+  type SelectedLocation = { name: string; flag: string } | null;
   const [selectedLocation, setSelectedLocation] =
     useState<SelectedLocation>(null);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLocationSwitcherOpen, setIsLocationSwitcherOpen] = useState(false);
 
   // --- REFACTORED: Combined styles into a single Tailwind class string ---
   // This replaces bentoCardStyle, bentoCardClassName, and bentoCardProps
@@ -117,6 +117,10 @@ export default function DashboardPage() {
         buttonBgColor="var(--color-bg-surface)"
         buttonTextColor="var(--color-text-primary)"
         ease="power3.out"
+        isLocationSwitcherOpen={isLocationSwitcherOpen}
+        onToggleLocationSwitcher={() => setIsLocationSwitcherOpen(!isLocationSwitcherOpen)}
+        selectedLocation={selectedLocation}
+        onLocationChange={setSelectedLocation}
       />
       {/* <Navbar /> */}
 
