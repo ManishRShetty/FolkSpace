@@ -3,38 +3,18 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "@/lib/firebase"; // Adjust path
+import { auth } from "@/lib/firebase";
+import { api, getUserId } from "@/lib/api";
 
-// Backend URL - should match your login page
-const BACK_END_URL = "https://backend-lnia.onrender.com";
-const LOCAL_BACK_END_URL = "http://localhost:5000";
-
-// Helper function to try multiple backend URLs
-const tryBackendCall = async (endpoint: string, options: RequestInit) => {
-  const urls = [BACK_END_URL, LOCAL_BACK_END_URL];
-  
-  for (const baseUrl of urls) {
-    try {
-      console.log(`Trying backend URL: ${baseUrl}${endpoint}`);
-      const response = await fetch(`${baseUrl}${endpoint}`, options);
-      
-      // Check if response is actually JSON
-      const contentType = response.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
-        const textResponse = await response.text();
-        console.error(`Non-JSON response from ${baseUrl}:`, textResponse);
-        continue; // Try next URL
-      }
-      
-      return response; // Success
-    } catch (error) {
-      console.error(`Failed to connect to ${baseUrl}:`, error);
-      continue; // Try next URL
-    }
-  }
-  
-  throw new Error("Failed to connect to any backend server");
-};
+// Nordic countries for the dropdown
+const nordicCountries = [
+  { value: "", label: "Select a country" },
+  { value: "denmark", label: "Denmark" },
+  { value: "finland", label: "Finland" },
+  { value: "iceland", label: "Iceland" },
+  { value: "norway", label: "Norway" },
+  { value: "sweden", label: "Sweden" },
+];
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -44,6 +24,23 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  // Helper function to clear any existing auth data
+  const clearAuthData = () => {
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userInfo");
+    console.log("Cleared localStorage auth data");
+  };
+
+  // Check if user is already logged in and has userId
+  useEffect(() => {
+    const userId = getUserId();
+    if (userId) {
+      console.log("User already has userId in localStorage:", userId);
+      // Redirect to dashboard if already logged in
+      router.push("/dashboard");
+    }
+  }, [router]);
 
   // Debug effect to monitor error state changes
   useEffect(() => {
@@ -67,9 +64,22 @@ export default function SignupPage() {
     setError(null);
     setIsLoading(true);
 
+    // Clear any existing auth data before starting
+    clearAuthData();
+
     // Validation
     if (!username.trim()) {
       setError("Username is required.");
+      setIsLoading(false);
+      return;
+    }
+    if (username.trim().length < 3) {
+      setError("Username must be at least 3 characters long.");
+      setIsLoading(false);
+      return;
+    }
+    if (!email.trim()) {
+      setError("Email is required.");
       setIsLoading(false);
       return;
     }
@@ -99,41 +109,44 @@ export default function SignupPage() {
 
       // 4. Create user in your backend database
       try {
-        const response = await tryBackendCall("/create-db", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${idToken}`,
-          },
-          body: JSON.stringify({
-            username: username,
-            email: email,
-            region: country,
-          }),
-        });
+        const response = await api.createUser({
+          username: username,
+          email: email,
+          region: country,
+        }, idToken);
 
         console.log("Response status:", response.status);
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to create user account in database.");
-        }
-
-        // 5. Get userId and store it
         const data = await response.json();
         console.log("Backend response:", data);
+        
         if (data.userId) {
           localStorage.setItem("userId", data.userId);
+          console.log("UserId stored in localStorage:", data.userId);
+          
+          // Also store user info for future reference
+          localStorage.setItem("userInfo", JSON.stringify({
+            username: username,
+            email: email,
+            region: country,
+            createdAt: new Date().toISOString()
+          }));
+          
         } else {
           throw new Error("Backend response is missing 'userId'.");
         }
 
         // 6. Redirect to onboarding or dashboard
+        setIsLoading(false);
         router.push("/onboarding");
 
       } catch (apiError: any) {
         console.error("Error calling /create-db:", apiError);
-        setError(`Account created, but failed to sync with database: ${apiError.message}`);
+        
+        // Clear any partial auth data on API error
+        clearAuthData();
+        
+        setError(`Account created, but failed to sync with database: ${apiError.message}. Please try signing in.`);
         setIsLoading(false);
         return;
       }
@@ -141,26 +154,26 @@ export default function SignupPage() {
     } catch (err: any) {
       // Handle Firebase signup errors
       console.error("Error signing up:", err);
-      console.error("Error code:", err.code); // Debug logging
-      console.error("Full error object:", err); // More detailed debugging
+      console.error("Error code:", err.code);
+      console.error("Full error object:", err);
       
       setIsLoading(false); // Reset loading state immediately
       
-      // Small delay to ensure UI updates properly
-      setTimeout(() => {
-        if (err.code === "auth/email-already-in-use") {
-          console.log("Setting email-already-in-use error message");
-          setError("This email address is already in use. Please try with a different email or sign in instead.");
-        } else if (err.code === "auth/invalid-email") {
-          setError("Please enter a valid email address.");
-        } else if (err.code === "auth/weak-password") {
-          setError("Password is too weak. Please choose a stronger password.");
-        } else if (err.code === "auth/operation-not-allowed") {
-          setError("Email/password accounts are not enabled. Please contact support.");
-        } else {
-          setError(`An unexpected error occurred: ${err.message || "Please try again."}`);
-        }
-      }, 100);
+      // Set error message immediately
+      if (err.code === "auth/email-already-in-use") {
+        console.log("Setting email-already-in-use error message");
+        setError("This email address is already in use. Please try with a different email or sign in instead.");
+      } else if (err.code === "auth/invalid-email") {
+        setError("Please enter a valid email address.");
+      } else if (err.code === "auth/weak-password") {
+        setError("Password is too weak. Please choose a stronger password.");
+      } else if (err.code === "auth/operation-not-allowed") {
+        setError("Email/password accounts are not enabled. Please contact support.");
+      } else if (err.code === "auth/network-request-failed") {
+        setError("Network error. Please check your internet connection and try again.");
+      } else {
+        setError(`An unexpected error occurred: ${err.message || "Please try again."}`);
+      }
     }
   };
 
@@ -278,6 +291,27 @@ export default function SignupPage() {
                 className="mt-2 text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 underline"
               >
                 Go to Sign In page
+              </button>
+            )}
+            {error.includes("failed to sync with database") && (
+              <button
+                type="button"
+                onClick={() => router.push("/login")}
+                className="mt-2 text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 underline"
+              >
+                Try Sign In instead
+              </button>
+            )}
+            {error.includes("Network error") && (
+              <button
+                type="button"
+                onClick={() => {
+                  setError(null);
+                  setIsLoading(false);
+                }}
+                className="mt-2 text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 underline"
+              >
+                Try Again
               </button>
             )}
           </div>
