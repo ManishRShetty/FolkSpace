@@ -1,10 +1,39 @@
-// server.js (updated)
 const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
-require("dotenv").config();
+const cacheMiddleware = require("./middleware/cacheMiddleware");
+const { clearCache } = require("./utils/cacheUtils");
 
+
+require("dotenv").config();
+const nodemailer = require("nodemailer");
 const PORT = process.env.PORT || 5000;
+
+
+const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST,
+  port: process.env.EMAIL_PORT,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+
+async function sendEmailAlert(to, subject, html) {
+  try {
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL_FROM || `"Nordic Retail System" <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      html,
+    });
+    console.log(`Email sent to ${to}: ${info.messageId}`);
+  } catch (err) {
+    console.error(" Failed to send email alert:", err.message);
+  }
+}
 
 const countryMap = { denmark: 0, finland: 1, iceland: 2, norway: 3, sweden: 4 };
 const productMap = {
@@ -13,7 +42,6 @@ const productMap = {
   lotion: 2,
   shampoo: 3,
   soap: 4,
-  "tooth paste": 5,
   toothpaste: 5,
 };
 function encodeCountry(c) {
@@ -24,6 +52,7 @@ function encodeProduct(p) {
   if (!p) return -1;
   return productMap[(p + "").toLowerCase()] ?? -1;
 }
+
 function random_forest(productCode, month, countryCode) {
   if (productCode < 0 || countryCode < 0 || !month) return 0;
   const seed = productCode * 97 + countryCode * 53 + Number(month) * 11;
@@ -163,7 +192,8 @@ app.post("/add-item/:userId", async (req, res) => {
       },
       { upsert: true }
     );
-
+    await clearCache(`/analytics/${req.params.userId}*`);
+     await clearCache(`/top-sold/${req.params.userId}*`);
     res.status(201).json({ message: "Item added successfully", itemId: result.insertedId });
   } catch (err) {
     console.error("Error adding item:", err);
@@ -305,7 +335,7 @@ app.post("/forecast", async (req, res) => {
   }
 });
 
-app.get("/analytics/:userId", async (req, res) => {
+app.get("/analytics/:userId",cacheMiddleware, async (req, res) => {
   const { userId } = req.params;
   try {
     const { user, userDB } = await getUserAndDBByUserId(userId);
@@ -389,7 +419,6 @@ app.get("/stock/:userId", async (req, res) => {
   }
 });
 
-
 app.post("/bill/:userId", async (req, res) => {
   const { userId } = req.params;
   const { items } = req.body || {};
@@ -419,6 +448,7 @@ app.post("/bill/:userId", async (req, res) => {
       );
 
       const doc = updated.value || { quantity: 0, current_price: 0 };
+
       if (doc.quantity < 0) {
         await userDB.collection("current_stock").updateOne(
           { product_name, country },
@@ -431,8 +461,44 @@ app.post("/bill/:userId", async (req, res) => {
       const lineTotal = price * qty;
       grandTotal += lineTotal;
 
-      if (doc.quantity === 0) {
-        console.warn(`[STOCK-EMPTY] userId=${userId} product="${product_name}" country="${country}"`);
+      // ⚠️ STOCK ALERT SECTION
+      if (doc.quantity <= 10) {
+        // If retailer has an email
+        if (user.email) {
+          const subject =
+            doc.quantity === 0
+              ? `🚨 OUT OF STOCK: ${product_name} (${country})`
+              : `⚠️ LOW STOCK ALERT: ${product_name} (${country})`;
+
+          const html = `
+            <div style="font-family:Arial,sans-serif;padding:15px;background:#f9f9f9;border-radius:10px">
+              <h2>${subject}</h2>
+              <p>Dear <strong>${user.username}</strong>,</p>
+              <p>Your product <b>${product_name}</b> in <b>${country}</b> ${
+                doc.quantity === 0
+                  ? "has run out of stock."
+                  : `has only <b>${doc.quantity}</b> units left.`
+              }</p>
+              <p>Please restock soon to avoid missed sales.</p>
+              <hr />
+              <small style="color:#888">Automated Alert • Nordic Retail System</small>
+            </div>
+          `;
+          await sendEmailAlert(user.email, subject, html);
+        }
+
+        console.warn(
+          `[STOCK-ALERT] userId=${userId} product="${product_name}" country="${country}" remaining=${doc.quantity}`
+        );
+
+        // Optional: log in alerts collection
+        await userDB.collection("alerts").insertOne({
+          type: doc.quantity === 0 ? "out-of-stock" : "low-stock",
+          product_name,
+          country,
+          remaining_qty: doc.quantity,
+          sentAt: new Date(),
+        });
       }
 
       results.push({
@@ -449,13 +515,14 @@ app.post("/bill/:userId", async (req, res) => {
       success: true,
       items: results,
       grand_total: Number(grandTotal.toFixed(2)),
-      message: "Billing completed and stock updated.",
+      message: "Billing completed, stock updated, and alerts sent if required.",
     });
   } catch (e) {
     console.error("Error in /bill:", e);
     res.status(500).json({ error: "Failed to complete billing" });
   }
 });
+
 
 app.post("/dynamic-pricing/:userId", async (req, res) => {
   const { userId } = req.params;
@@ -532,7 +599,7 @@ app.post("/dynamic-pricing/:userId", async (req, res) => {
   }
 });
 
-app.get("/top-sold/:userId", async (req, res) => {
+app.get("/top-sold/:userId",cacheMiddleware, async (req, res) => {
   const { userId } = req.params;
   const limit = Number(req.query.limit) || 5;
 
@@ -595,7 +662,7 @@ app.get("/top-sold/:userId", async (req, res) => {
 });
 
 
-app.get("/regional-top/:country", async (req, res) => {
+app.get("/regional-top/:country",cacheMiddleware, async (req, res) => {
   const { country } = req.params;
   const limit = Number(req.query.limit) || 5;
 
