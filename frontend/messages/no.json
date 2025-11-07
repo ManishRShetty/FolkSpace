@@ -52,5 +52,23 @@
     "expiringSoon": "Utløper snart",
     "quantity": "Antall: {level}",
     "viewAll": "Se hele lagerbeholdningen"
+  },
+  "components": {
+    "TopTable": {
+      "title": "Regionale toselgere",
+      "loading": "Laster regionale data...",
+      "error": "Feil: Kunne ikke hente regionale data",
+      "retry": "Prøv på nytt",
+      "empty": {
+        "title": "Ingen regionale data tilgjengelig",
+        "subtitle": "Data fra nærliggende forhandlere"
+      },
+      "headers": {
+        "product": "Produkt",
+        "totalSales": "Totalt salg",
+        "avgPrice": "Gj.sn. pris",
+        "retailers": "Forhandlere"
+      }
+    }
   }
 }

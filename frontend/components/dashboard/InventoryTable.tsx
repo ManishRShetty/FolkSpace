@@ -135,7 +135,7 @@ export function InventoryTable({ userId: propUserId }: Props) {
                     {item.Quantity}
                   </td>
                   <td className="px-6 py-4 whitespace-nowTwrap text-sm text-gray-500 dark:text-gray-300">
-                    ${(item.selling_price || item.cost_price || 0).toFixed(2)}
+                    €{(item.selling_price || item.cost_price || 0).toFixed(2)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                     {item.month}

@@ -52,5 +52,23 @@
     "expiringSoon": "Rennur út fljótlega",
     "quantity": "Magn: {level}",
     "viewAll": "Skoða allar birgðir"
+  },
+  "components": {
+    "TopTable": {
+      "title": "Svæðisbundnir söluhæstu",
+      "loading": "Hleður svæðisgögnum...",
+      "error": "Villa: Tókst ekki að sækja svæðisgögn",
+      "retry": "Reyna aftur",
+      "empty": {
+        "title": "Engin svæðisgögn tiltæk",
+        "subtitle": "Gögn frá nálægum söluaðilum"
+      },
+      "headers": {
+        "product": "Vara",
+        "totalSales": "Heildarsala",
+        "avgPrice": "Meðalverð",
+        "retailers": "Söluaðilar"
+      }
+    }
   }
 }

@@ -52,5 +52,23 @@
     "expiringSoon": "Utgår snart",
     "quantity": "Antal: {level}",
     "viewAll": "Visa hela lagret"
+  },
+  "components": {
+    "TopTable": {
+      "title": "Regionala toppsäljare",
+      "loading": "Laddar regional data...",
+      "error": "Fel: Kunde inte hämta regional data",
+      "retry": "Försök igen",
+      "empty": {
+        "title": "Ingen regional data tillgänglig",
+        "subtitle": "Data från närliggande återförsäljare"
+      },
+      "headers": {
+        "product": "Produkt",
+        "totalSales": "Total försäljning",
+        "avgPrice": "Genomsnittspris",
+        "retailers": "Återförsäljare"
+      }
+    }
   }
 }

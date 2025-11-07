@@ -52,5 +52,23 @@
     "expiringSoon": "Vanhenee pian",
     "quantity": "Määrä: {level}",
     "viewAll": "Katso koko varasto"
+  },
+  "components": {
+    "TopTable": {
+      "title": "Alueelliset myyntihitit",
+      "loading": "Ladataan aluetietoja...",
+      "error": "Virhe: Alueellisten tietojen nouto epäonnistui",
+      "retry": "Yritä uudelleen",
+      "empty": {
+        "title": "Alueellisia tietoja ei saatavilla",
+        "subtitle": "Tiedot läheisiltä jälleenmyyjiltä"
+      },
+      "headers": {
+        "product": "Tuote",
+        "totalSales": "Myynti yhteensä",
+        "avgPrice": "Keskihinta",
+        "retailers": "Jälleenmyyjät"
+      }
+    }
   }
 }

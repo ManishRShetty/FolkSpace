@@ -52,5 +52,23 @@
     "expiringSoon": "Expiring Soon",
     "quantity": "Qty: {level}",
     "viewAll": "View All Inventory"
+  },
+  "components": {
+    "TopTable": {
+      "title": "Regional Top Sellers",
+      "loading": "Loading Regional Data...",
+      "error": "Error: Failed to fetch regional data",
+      "retry": "Retry",
+      "empty": {
+        "title": "No regional data available",
+        "subtitle": "Data from nearby retailers"
+      },
+      "headers": {
+        "product": "Product",
+        "totalSales": "Total Sales",
+        "avgPrice": "Avg Price",
+        "retailers": "Retailers"
+      }
+    }
   }
 }
