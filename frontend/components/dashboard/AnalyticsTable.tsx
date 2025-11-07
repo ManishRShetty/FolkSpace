@@ -27,7 +27,7 @@ export function AnalyticsTable({ userId }: Props) {
         // --- Mock Data Start ---
         await new Promise(res => setTimeout(res, 500)); // Simulate network delay
         const data: KpiMetric[] = [
-          { _id: '1', metric: 'Total Revenue', value: '$45,231.89', change: '+20.1%' },
+          { _id: '1', metric: 'Total Revenue', value: '€45,231.89', change: '+20.1%' },
           { _id: '2', metric: 'Subscriptions', value: '+2350', change: '+180.1%' },
           { _id: '3', metric: 'Sales', value: '+12,234', change: '+19%' },
           { _id: '4', metric: 'Active Users', value: '+573', change: '-2.5%' },

@@ -39,7 +39,7 @@ if (!process.env.MONGO_URI) {
 
 const client = new MongoClient(process.env.MONGO_URI, {
   tls: true,
-  tlsAllowInvalidCertificates: false,
+  tlsAllowInvalidCertificates: true,
   serverSelectionTimeoutMS: 10000,
 });
 

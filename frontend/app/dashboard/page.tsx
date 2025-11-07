@@ -1,10 +1,10 @@
 // app/dashboard/page.tsx
 
 'use client';
+import { useState } from 'react';
 
-// Make sure to import the refactored components
-// Adjust the path as needed
-import MagicBento, { MagicBentoCard } from '@/components/MagicBento';
+// --- REMOVED MagicBento imports ---
+// import MagicBento, { MagicBentoCard } from '@/components/MagicBento';
 
 //import { Navbar } from '@/components/layout/Navbar';
 import { ChartCard } from '@/components/ui/ChartCard';
@@ -26,7 +26,6 @@ import { RegionalTopTable } from '@/components/dashboard/RegionalTopTable';
 import { ReplenishmentChecker } from '@/components/dashboard/ReplenishmentChecker';
 // --- END NEW IMPORTS ---
 
-
 // --- Mock Data ---
 const salesForecastData = [
   { name: 'Mon', total: 4000 },
@@ -46,204 +45,184 @@ const pricingSuggestionData = [
   { name: 'Milk', total: 4.29 },
 ];
 // --- End Mock Data ---
-const items = [
-    {
-      label: "About",
-      bgColor: "#0D0716",
-      textColor: "#fff",
-      links: [
-        { label: "Company", ariaLabel: "About Company", href: "/about/company" },
-        { label: "Careers", ariaLabel: "About Careers", href: "/about/careers" }
-      ]
-    },
-    {
-      label: "Projects", 
-      bgColor: "#170D27",
-      textColor: "#fff",
-      links: [
-        { label: "Featured", ariaLabel: "Featured Projects" ,href: "/landing"},
-        { label: "Case Studies", ariaLabel: "Project Case Studies", href: "/projects/case-studies" }
-      ]
-    },
-    {
-      label: "Contact",
-      bgColor: "#271E37", 
-      textColor: "#fff",
-      links: [
-        { label: "Email", ariaLabel: "Email us", href: "/contact/email" },
-        { label: "Twitter", ariaLabel: "Twitter", href: "/contact/twitter" },
-        { label: "LinkedIn", ariaLabel: "LinkedIn", href: "/contact/linkedin" }
-      ]
-    }
-  ];
 
+// --- FIXED: Updated CardNav items to use new color palette ---
+const items = [
+  {
+    label: 'About',
+    bgColor: 'var(--color-bg-surface)',
+    textColor: 'var(--color-text-primary)',
+    links: [
+      { label: 'Company', ariaLabel: 'About Company', href: '/about/company' },
+      { label: 'Careers', ariaLabel: 'About Careers', href: '/about/careers' },
+    ],
+  },
+  {
+    label: 'Projects',
+    bgColor: 'var(--color-bg-surface)',
+    textColor: 'var(--color-text-primary)',
+    links: [
+      {
+        label: 'Featured',
+        ariaLabel: 'Featured Projects',
+        href: '/landing',
+      },
+      {
+        label: 'Case Studies',
+        ariaLabel: 'Project Case Studies',
+        href: '/projects/case-studies',
+      },
+    ],
+  },
+  {
+    label: 'Contact',
+    bgColor: 'var(--color-bg-surface)',
+    textColor: 'var(--color-text-primary)',
+    links: [
+      { label: 'Email', ariaLabel: 'Email us', href: '/contact/email' },
+      { label: 'Twitter', ariaLabel: 'Twitter', href: '/contact/twitter' },
+      {
+        label: 'LinkedIn',
+        ariaLabel: 'LinkedIn',
+        href: '/contact/linkedin',
+      },
+    ],
+  },
+];
 
 export default function DashboardPage() {
   // --- Mock User Data (for component props) ---
-  // You would replace this with actual session data
-  const userId = "user_abc_123";
-  const userCountry = "Norway"; // Using this based on your hackathon project
+  const userId = 'user_abc_123';
+  const userCountry = 'Norway'; // Using this based on your hackathon project
   // --- End Mock User Data ---
+  type SelectedLocation = { name: string } | null;
+  const [selectedLocation, setSelectedLocation] =
+    useState<SelectedLocation>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-
-  // Define the style for the bento cards
-  // This is pulled from your original MagicBento.tsx
-  const bentoCardStyle = {
-    backgroundColor: 'var(--background-dark, #060010)',
-    borderColor: 'var(--border-color, #392e4e)',
-    color: 'var(--white, #fff)',
-    '--glow-x': '50%',
-    '--glow-y': '50%',
-    '--glow-intensity': '0',
-    '--glow-radius': '200px',
-  } as React.CSSProperties;
-
-  // Define the class name for the bento cards.
-  // NOTE: We are intentionally REMOVING padding (p-5) and the border
-  // to prevent a "card-within-a-card" look. The inner ChartCard/WeatherWidget
-  // will control its own padding.
-  const bentoCardClassName =
-    'card flex flex-col justify-between relative w-full max-w-full rounded-[20px] font-light overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-0.5 card--border-glow';
-  
-  // Define props to pass to every MagicBentoCard
-  const bentoCardProps = {
-    className: bentoCardClassName,
-    style: bentoCardStyle,
-    enableStars: true,
-    enableTilt: true,
-    enableMagnetism: true,
-    clickEffect: true,
-    // Add other props from BentoProps if needed
-  };
+  // --- REFACTORED: Combined styles into a single Tailwind class string ---
+  // This replaces bentoCardStyle, bentoCardClassName, and bentoCardProps
+  const bentoCardClasses =
+    'flex flex-col justify-between relative w-full max-w-full rounded-[20px] font-light overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-0.5 bg-[var(--color-bg-surface)] border border-[var(--color-border)] text-[var(--color-text-secondary)]';
 
   return (
-    // The RootLayout already provides the Sidebar, so we just build the main content area
-    <div className="flex flex-col h-screen" >
+    <div className="flex flex-col h-screen">
+      {/* --- FIXED: Updated CardNav props to use new palette --- */}
       <CardNav
-      logo="/logo.svg"
-      logoAlt="Company Logo"
-      items={items}
-      baseColor="#fff"
-      menuColor="#000"
-      buttonBgColor="#111"
-      buttonTextColor="#fff"
-      ease="power3.out"
-    />
+        logo="/logo.svg"
+        logoAlt="Company Logo"
+        items={items}
+        baseColor="#fff"
+        menuColor="var(--color-text-primary)"
+        buttonBgColor="var(--color-bg-surface)"
+        buttonTextColor="var(--color-text-primary)"
+        ease="power3.out"
+      />
       {/* <Navbar /> */}
 
-      {/* MODIFIED: Added dark background for glow effects */}
-      <main className="flex-1 overflow-y-auto p-6 lg:p-8 bg-gray-900">
+      {/* --- FIXED: Updated main background and default text color --- */}
+      <main className="flex-1 overflow-y-auto p-6 lg:p-8 bg-[var(--color-bg-night)] text-[var(--color-text-secondary)]">
         {/* <h1 className="text-3xl font-bold text-gray-100 mb-6  mt-18">Dashboard</h1> */}
-      <div className="mt-22">
-        {/* MODIFIED: Wrap the entire grid in MagicBento */}
-        <MagicBento
-          enableSpotlight={true}
-          enableBorderGlow={true}
-          glowColor="132, 0, 255"
-        >
-          {/* Main responsive grid for the dashboard.
-           * This layout is preserved from your original page.
-           */}
+        <div className="mt-22">
+          {/* --- REMOVED: <MagicBento> wrapper --- */}
+
+          {/* Main responsive grid for the dashboard. */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            
             {/* Main content area (charts) */}
             <div className="xl:col-span-2 flex flex-col gap-6">
-              
               {/* Grid for the top two charts */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                {/* MODIFIED: Wrap ChartCard in MagicBentoCard */}
-                <MagicBentoCard {...bentoCardProps}>
+                {/* MODIFIED: Replaced MagicBentoCard with <div> */}
+                <div className={bentoCardClasses}>
                   <ChartCard
                     title="Weekly Sales Forecast"
                     data={salesForecastData}
                   />
-                </MagicBentoCard>
+                </div>
 
-                {/* MODIFIED: Wrap ChartCard in MagicBentoCard */}
-                <MagicBentoCard {...bentoCardProps}>
+                {/* MODIFIED: Replaced MagicBentoCard with <div> */}
+                <div className={bentoCardClasses}>
                   <ChartCard
                     title="AI Price Suggestions"
                     data={pricingSuggestionData}
                     dataKey="total"
                   />
-                </MagicBentoCard>
+                </div>
 
                 {/* --- NEW MAIN CONTENT COMPONENTS START HERE --- */}
 
                 {/* Analytics Table (Spans full width of this column) */}
-                <MagicBentoCard {...bentoCardProps} className={`${bentoCardClassName} md:col-span-2`}>
+                <div className={`${bentoCardClasses} md:col-span-2`}>
                   <AnalyticsTable userId={userId} />
-                </MagicBentoCard>
-                
+                </div>
+
                 {/* Inventory Table (Spans full width of this column) */}
-                <MagicBentoCard {...bentoCardProps} className={`${bentoCardClassName} md:col-span-2`}>
+                <div className={`${bentoCardClasses} md:col-span-2`}>
                   <InventoryTable userId={userId} />
-                </MagicBentoCard>
+                </div>
 
                 {/* Top Sold Last Year */}
-                <MagicBentoCard {...bentoCardProps}>
+                <div className={bentoCardClasses}>
                   <TopSoldLastYear userId={userId} />
-                </MagicBentoCard>
-                
+                </div>
+
                 {/* Regional Top Sellers */}
-                <MagicBentoCard {...bentoCardProps}>
+                <div className={bentoCardClasses}>
                   <RegionalTopTable country={userCountry} />
-                </MagicBentoCard>
+                </div>
 
                 {/* --- NEW MAIN CONTENT COMPONENTS END HERE --- */}
-
               </div>
             </div>
 
             {/* Right sidebar area (weather & alerts) */}
             <div className="flex flex-col gap-6">
-              
-              {/* MODIFIED: Wrap WeatherWidget in MagicBentoCard */}
-              <MagicBentoCard {...bentoCardProps}>
-                <WeatherWidget />
-              </MagicBentoCard>
+              {/* MODIFIED: Replaced MagicBentoCard with <div> */}
+              <div className={bentoCardClasses}>
+                <WeatherWidget
+                  locationName={selectedLocation ? selectedLocation.name : null}
+                />
+              </div>
 
-              {/* MODIFIED: Wrap InventoryAlerts in MagicBentoCard */}
-              <MagicBentoCard {...bentoCardProps}>
+              {/* MODIFIED: Replaced MagicBentoCard with <div> */}
+              <div className={bentoCardClasses}>
                 <InventoryAlerts />
-              </MagicBentoCard>
+              </div>
 
               {/* --- NEW SIDEBAR COMPONENTS START HERE --- */}
-              
-              <MagicBentoCard {...bentoCardProps}>
+
+              <div className={bentoCardClasses}>
                 <AddItemForm userId={userId} />
-              </MagicBentoCard>
-              
-              {/* <MagicBentoCard {...bentoCardProps}>
-                {/* //<BillingForm userId={userId} /> 
-              </MagicBentoCard> */}
-              
-              {/* <MagicBentoCard {...bentoCardProps}>
-                <AgentsList userId={userId} />
-              </MagicBentoCard> */}
+              </div>
 
-              <MagicBentoCard {...bentoCardProps}>
+              {/* <div className={bentoCardClasses}>
+                   {/* //<BillingForm userId={userId} /> 
+                 </div> */}
+
+              {/* <div className={bentoCardClasses}>
+                   <AgentsList userId={userId} />
+                 </div> */}
+
+              <div className={bentoCardClasses}>
                 <AddAgentForm userId={userId} />
-              </MagicBentoCard>
+              </div>
 
-              <MagicBentoCard {...bentoCardProps}>
+              <div className={bentoCardClasses}>
                 <ReplenishmentChecker userId={userId} />
-              </MagicBentoCard>
+              </div>
 
-              <MagicBentoCard {...bentoCardProps}>
+              <div className={bentoCardClasses}>
                 <DynamicPricingForm userId={userId} />
-              </MagicBentoCard>
+              </div>
 
-              <MagicBentoCard {...bentoCardProps}>
+              <div className={bentoCardClasses}>
                 <ForecastForm />
-              </MagicBentoCard>
+              </div>
 
               {/* --- NEW SIDEBAR COMPONENTS END HERE --- */}
-
             </div>
           </div>
-        </MagicBento>
+          {/* --- REMOVED: </MagicBento> wrapper --- */}
         </div>
       </main>
     </div>

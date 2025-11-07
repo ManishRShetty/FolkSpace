@@ -9,11 +9,11 @@ import {
   Wind,
   CloudRain,
   Snowflake,
-  MapPin, // Icon for loading/error state
+  MapPin,
 } from "lucide-react";
 import { ReactNode } from "react";
 
-// --- Weather Visuals (Unchanged) ---
+// --- Weather Visuals ---
 interface WeatherVisuals {
   icon: ReactNode;
   gradient: string;
@@ -79,20 +79,6 @@ const getWeatherVisuals = (condition: WeatherCondition): WeatherVisuals => {
       };
   }
 };
-
-// --- Weather Code Converter (Unchanged) ---
-// This is no longer used by the mock fetch, but kept for reference
-const getWeatherCondition = (code: number): WeatherCondition => {
-  if ([0].includes(code)) return "Sunny";
-  if ([1, 2, 3].includes(code)) return "Cloudy";
-  if ([45, 48].includes(code)) return "Foggy";
-  if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) return "Rainy";
-  if ([71, 73, 75, 85, 86].includes(code)) return "Snowy";
-  if ([95, 96, 99].includes(code)) return "Snowstorm";
-  return "Cloudy";
-};
-
-// --- Impact Map (Unchanged) ---
 const impactMap: Record<string, string> = {
   Sunny: "Low impact. Boost in outdoor activity sales.",
   Cloudy: "Low impact. Steady retail behavior.",
@@ -103,59 +89,83 @@ const impactMap: Record<string, string> = {
   Foggy: "Low visibility, possible travel delays.",
 };
 
+// --- Props for the widget ---
+interface WeatherWidgetProps {
+  locationName: string | null;
+}
+
 // --- Main Weather Widget ---
-export default function WeatherWidget() {
+export default function WeatherWidget({ locationName }: WeatherWidgetProps) {
   const [weather, setWeather] = useState<any>(null);
-  // The 'location' state for lat/lon is no longer needed
-  // const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // **MODIFIED:** Replaced geolocation and fetching with a single
-  // mock data loader effect.
   useEffect(() => {
-    // --- MOCK DATA CONFIGURATION ---
-    // Change this to 'false' to test the error state
+    // If no location is selected, show a default state
+    if (!locationName) {
+      setWeather({
+        location: "Nordic Region",
+        temperature: 10,
+        condition: "Cloudy",
+      });
+      setLoading(false);
+      setError(null);
+      return; // Don't proceed to fetch
+    }
+
+    // A location IS selected, so "fetch" data
     const MOCK_SUCCESS = true;
-    const SIMULATED_DELAY = 1500; // 1.5 seconds
+    const SIMULATED_DELAY = 500; // 0.5 seconds
 
     setLoading(true);
 
     const timer = setTimeout(() => {
       if (MOCK_SUCCESS) {
-        // --- YOUR MOCK DATA ---
-        setWeather({
-          location: "Mock City",
-          temperature: 25,
-          condition: "Sunny",
-        });
+        // --- DYNAMIC MOCK DATA based on prop ---
+        let mockData;
+        switch (locationName) {
+          case "Sweden":
+            mockData = { location: "Stockholm", temperature: 15, condition: "Cloudy" };
+            break;
+          case "Finland":
+            mockData = { location: "Helsinki", temperature: 10, condition: "Rainy" };
+            break;
+          case "Norway":
+            mockData = { location: "Oslo", temperature: 12, condition: "Windy" };
+            break;
+          case "Denmark":
+            mockData = { location: "Copenhagen", temperature: 18, condition: "Sunny" };
+            break;
+          case "Iceland":
+            mockData = { location: "Reykjavik", temperature: 5, condition: "Snowy" };
+            break;
+          default:
+            mockData = { location: locationName, temperature: 10, condition: "Cloudy" };
+        }
+        setWeather(mockData);
         // ------------------------
         setError(null);
       } else {
-        // Simulate an error
-        setError("Failed to fetch mock data. This is a test error.");
+        setError(`Failed to fetch data for ${locationName}.`);
         setWeather(null);
       }
       setLoading(false);
     }, SIMULATED_DELAY);
 
-    // Cleanup function to clear the timer if the component unmounts
+    // Cleanup function to clear the timer
     return () => clearTimeout(timer);
-  }, []); // Empty dependency array ensures this runs once on mount
+  }, [locationName]); // <-- This dependency array makes it all work!
 
-  // --- Render Logic (Unchanged) ---
-
-  // Loading state
+  // --- Render Logic ---
   if (loading) {
     return (
       <div className="p-5 rounded-lg shadow-md bg-gray-100 text-gray-500 italic flex items-center gap-2">
         <MapPin className="w-5 h-5 animate-pulse" />
-        Fetching weather data...
+        Fetching weather data for {locationName}...
       </div>
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="p-5 rounded-lg shadow-md bg-red-100 text-red-700 italic flex items-center gap-2">
@@ -165,9 +175,7 @@ export default function WeatherWidget() {
     );
   }
 
-  // Success state (weather data is loaded)
   if (!weather) {
-    // Fallback, should be covered by loading/error
     return null;
   }
 
