@@ -1,4 +1,4 @@
-# Folkspace 🤖🌧️
+# Folkspace 
 
 A Climate-Responsive AI Platform for sustainable retail, built in a 28-hour hackathon.
 
@@ -10,7 +10,7 @@ A Climate-Responsive AI Platform for sustainable retail, built in a 28-hour hack
 
 ---
 
-## 🎯 The Problem
+##  The Problem
 
 Nordic retailers face a dual challenge:
 1.  **Unpredictable climate events** disrupt traditional demand forecasting, leading to stock mismatches.
@@ -18,7 +18,7 @@ Nordic retailers face a dual challenge:
 
 Traditional retail systems are not equipped to dynamically respond to sudden weather changes or manage the shelf-life of perishable goods at scale, leading to significant financial losses and environmental waste.
 
-## ✨ Our Solution
+##  Our Solution
 
 **Folkspace** is an intelligent, climate-aware dashboard that helps store managers forecast demand, optimize inventory, and implement dynamic pricing in real-time.
 
@@ -32,7 +32,7 @@ By combining historical sales data with live weather forecasts, Folkspace provid
 
 ---
 
-## 🛠️ Key Features (MVP)
+##  Key Features (MVP)
 
 * **Climate-Aware Demand Forecasting:** A model that predicts item demand using historical sales and weather API inputs (e.g., adjusting forecasts down for a coming storm).
 * **Dynamic Pricing Module:** Generates automatic price suggestions based on stock levels, shelf-life, and demand (e.g., markdowns for perishables, "eco-premiums" for high-carbon items).
@@ -42,7 +42,7 @@ By combining historical sales data with live weather forecasts, Folkspace provid
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
 Our architecture is a lean, demo-friendly microservice model designed for a rapid hackathon sprint.
 
@@ -56,7 +56,7 @@ Our architecture is a lean, demo-friendly microservice model designed for a rapi
 
 ---
 
-## 💻 Tech Stack
+##  Tech Stack
 
 | Category | Technology | Purpose |
 | :--- | :--- | :--- |
@@ -117,7 +117,7 @@ Your application should now be running locally at `http://localhost:3000`.
 
 ---
 
-## 👥 The Team
+##  The Team
 
 * **Frontend Lead:** Responsible for React components, UI/UX, and chart integration.
 * **Backend/API Lead:** Responsible for Node/Express server, MongoDB schemas, and API logic.
@@ -126,7 +126,7 @@ Your application should now be running locally at `http://localhost:3000`.
 
 ---
 
-## 📈 Future Roadmap
+##  Future Roadmap
 
 Given more time, we would expand Folkspace's capabilities:
 
