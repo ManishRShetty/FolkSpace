@@ -64,7 +64,7 @@ export default function LocationPicker({
       </MapContainer>
       <button
         onClick={() => onLocationSelect(getLatLng(position))}
-        className="w-full bg-blue-600 text-white p-2 rounded-md font-semibold hover:bg-blue-700 transition-colors"
+        className="w-full bg-blue-600 text-black p-2 rounded-md font-semibold hover:bg-blue-700 transition-colors"
       >
         Confirm Location
       </button>

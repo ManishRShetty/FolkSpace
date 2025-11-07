@@ -45,7 +45,7 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
           {languages.map((lang) => (
             <div
               key={lang.name}
-              className="flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-gray-100 whitespace-nowrap"
+              className="flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-gray-100 whitespace-nowrap text-black"
               onClick={() => {
                 setSelectedLanguage(lang);
                 onToggle();

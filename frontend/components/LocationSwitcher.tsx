@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { IoLocationOutline } from "react-icons/io5";
 
 // --- LOCATION DATA ---
@@ -11,21 +11,26 @@ const nordicLocations = [
   { name: "Iceland", flag: "🇮🇸" },
 ];
 
+// --- TYPE FOR LOCATION ---
+type Location = {
+  name: string;
+  flag: string;
+} | null;
+
 // --- PROPS ---
 interface LocationSwitcherProps {
   isOpen: boolean;
   onToggle: () => void;
+  selectedLocation: Location;
+  onLocationChange: (location: Location) => void;
 }
 
 const LocationSwitcher: React.FC<LocationSwitcherProps> = ({
   isOpen,
   onToggle,
+  selectedLocation,
+  onLocationChange,
 }) => {
-  const [selectedLocation, setSelectedLocation] = useState<{
-    name: string;
-    flag: string;
-  } | null>(null);
-
   return (
     <div className="relative">
       {/* Visible Button */}
@@ -45,14 +50,14 @@ const LocationSwitcher: React.FC<LocationSwitcherProps> = ({
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 min-w-full bg-white rounded-lg shadow-lg overflow-hidden z-10">
+        <div className="absolute top-full right-0 mt-2 min-w-full bg-white rounded-lg shadow-lg overflow-hidden z-10">
           {nordicLocations.map((loc) => (
             <div
               key={loc.name}
-              className="flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-gray-100 whitespace-nowrap"
+              className="flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-gray-100 whitespace-nowrap text-black"
               onClick={() => {
-                setSelectedLocation(loc);
-                onToggle(); // Close dropdown
+                onLocationChange(loc);
+                // onToggle(); // Removed: Parent now controls closing
               }}
             >
               <span className="text-xl">{loc.flag}</span>
@@ -62,10 +67,10 @@ const LocationSwitcher: React.FC<LocationSwitcherProps> = ({
           {/* Reset button */}
           {selectedLocation && (
             <div
-              className="flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-gray-100 border-t"
+              className="flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-gray-100 border-t text-black"
               onClick={() => {
-                setSelectedLocation(null);
-                onToggle(); // Close dropdown
+                onLocationChange(null);
+                // onToggle(); // Removed: Parent now controls closing
               }}
             >
               <IoLocationOutline size={22} />
