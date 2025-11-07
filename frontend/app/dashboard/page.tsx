@@ -64,9 +64,9 @@ export default function DashboardPage() {
       {/* <Navbar /> */}
 
       {/* MODIFIED: Added dark background for glow effects */}
-      <main className="flex-1 overflow-y-auto p-6 lg:p-8 bg-gray-900 ">
-        <h1 className="text-3xl font-bold text-gray-100 mb-6  mt-18">Dashboard</h1>
-
+      <main className="flex-1 overflow-y-auto p-6 lg:p-8 bg-gray-900">
+        {/* <h1 className="text-3xl font-bold text-gray-100 mb-6  mt-18">Dashboard</h1> */}
+      <div className="mt-22">
         {/* MODIFIED: Wrap the entire grid in MagicBento */}
         <MagicBento
           enableSpotlight={true}
@@ -118,6 +118,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </MagicBento>
+        </div>
       </main>
     </div>
   );

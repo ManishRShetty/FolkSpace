@@ -5,7 +5,7 @@ import WeatherWidget from "@/components/widgets/WeatherWidget";
 
 export default function Home() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-black">
       <h1 className="text-2xl font-semibold">AI Retail Dashboard</h1>
       <WeatherWidget />
       <div className="grid md:grid-cols-2 gap-6">
