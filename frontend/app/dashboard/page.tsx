@@ -6,7 +6,7 @@ import MagicBento, { MagicBentoCard } from '@/components/MagicBento';
 import { ChartCard } from '@/components/ui/ChartCard';
 import  WeatherWidget  from '@/components/widgets/WeatherWidget';
 import { InventoryAlerts } from '@/components/widgets/InventoryAlerts';
-
+import CardNav from '@/components/CardNav';
 // --- Mock Data ---
 const salesForecastData = [
   { name: 'Mon', total: 4000 },
@@ -61,6 +61,16 @@ export default function DashboardPage() {
   return (
     // The RootLayout already provides the Sidebar, so we just build the main content area
     <div className="flex flex-col h-screen" >
+      <CardNav
+      logo="/logo.svg"
+      logoAlt="Company Logo"
+      
+      baseColor="#fff"
+      menuColor="#000"
+      buttonBgColor="#111"
+      buttonTextColor="#fff"
+      ease="power3.out"
+    />
       {/* <Navbar /> */}
 
       {/* MODIFIED: Added dark background for glow effects */}

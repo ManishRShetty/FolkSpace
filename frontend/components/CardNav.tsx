@@ -4,7 +4,7 @@ import { gsap } from 'gsap';
 // use your own icon import if react-icons is not available
 import { GoArrowUpRight } from 'react-icons/go';
 import { useRouter } from 'next/navigation';
-// Icons for the new elements
+// You may want to add an icon for Location and Profile
 import { IoLocationOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 
@@ -39,7 +39,7 @@ const CardNav: React.FC<CardNavProps> = ({
   items,
   className = '',
   ease = 'power3.out',
-  baseColor = '#fff',
+  baseColor = '#fff', // This is white, your image has a dark bar
   menuColor,
   buttonBgColor,
   buttonTextColor
@@ -160,67 +160,90 @@ const CardNav: React.FC<CardNavProps> = ({
     if (el) cardsRef.current[i] = el;
   };
 
-  // Color for the floating elements, defaulting to white for a dark bg
-  const floatingElementColor = menuColor || '#FFFFFF';
+  // Use a dark color if your navbar is dark, per your image
+  const navTextColor = menuColor || '#FFFFFF'; // Default to white for dark bg
 
   return (
-    // MODIFICATION: Added `relative` to anchor the new floating elements
     <div
-      className={`card-nav-container relative left-1/2 -translate-x-1/2 w-[90%] max-w-[800px] z-[99] top-[1.2em] md:top-[2em] ${className}`}
+      className={`card-nav-container absolute left-1/2 -translate-x-1/2 w-[90%] max-w-[800px] z-[99] top-[1.2em] md:top-[2em] ${className}`}
     >
-      {/* --- NEW: Floating Location Div --- */}
-      <div 
-        className="hidden md:flex items-center gap-1 cursor-pointer absolute right-full top-1/2 -translate-y-1/2 mr-4"
-        style={{ color: floatingElementColor }}
-      >
-        <IoLocationOutline size={20} />
-        <span className="text-sm font-medium">Location</span>
-      </div>
-
       <nav
         ref={navRef}
         className={`card-nav ${isExpanded ? 'open' : ''} block h-[60px] p-0 rounded-xl shadow-md relative overflow-hidden will-change-[height]`}
         style={{ backgroundColor: baseColor }}
       >
-        {/* This is the original nav top, as you provided */}
-        <div className="card-nav-top absolute inset-x-0 top-0 h-[60px] flex items-center justify-between p-2 pl-[1.1rem] z-[2]">
-          <div
-            className={`hamburger-menu ${isHamburgerOpen ? 'open' : ''} group h-full flex flex-col items-center justify-center cursor-pointer gap-[6px] order-2 md:order-none`}
-            onClick={toggleMenu}
-            role="button"
-            aria-label={isExpanded ? 'Close menu' : 'Open menu'}
-            tabIndex={0}
-            style={{ color: menuColor || (baseColor === '#fff' ? '#000' : '#fff') }}
-          >
-            <div
-              className={`hamburger-line w-[30px] h-[2px] bg-current transition-[transform,opacity,margin] duration-300 ease-linear [transform-origin:50%_50%] ${isHamburgerOpen ? 'translate-y-[4px] rotate-45' : ''
-                } group-hover:opacity-75`}
-            />
-            <div
-              className={`hamburger-line w-[30px] h-[2px] bg-current transition-[transform,opacity,margin] duration-300 ease-linear [transform-origin:50%_50%] ${isHamburgerOpen ? '-translate-y-[4px] -rotate-45' : ''
-                } group-hover:opacity-75`}
-            />
-          </div>
+        {/* MODIFICATION: 
+          - Kept justify-between
+          - Added Left and Right group wrappers
+          - Added order classes for mobile layout
+        */}
+        <div className="card-nav-top absolute inset-x-0 top-0 h-[60px] flex items-center justify-between p-2 md:px-4 z-[2]">
+          
+          {/* --- LEFT GROUP --- */}
+          <div className="flex items-center gap-2 md:gap-4 order-2 md:order-none">
+            
+            {/* --- NEW: Location Div --- */}
+            
+
+            {/* --- EXISTING: Hamburger Menu --- */}
+            <div
+              className={`hamburger-menu ${isHamburgerOpen ? 'open' : ''} group h-full flex flex-col items-center justify-center cursor-pointer gap-[6px] w-[44px]`}
+              onClick={toggleMenu}
+              role="button"
+              aria-label={isExpanded ? 'Close menu' : 'Open menu'}
+              tabIndex={0}
+              style={{ color: navTextColor }}
+            >
+              <div
+                className={`hamburger-line w-[30px] h-[2px] bg-current transition-[transform,opacity,margin] duration-300 ease-linear [transform-origin:50%_50%] ${isHamburgerOpen ? 'translate-y-[4px] rotate-45' : ''
+                  } group-hover:opacity-75`}
+              />
+              <div
+                className={`hamburger-line w-[30px] h-[2px] bg-current transition-[transform,opacity,margin] duration-300 ease-linear [transform-origin:50%_50%] ${isHamburgerOpen ? '-translate-y-[4px] -rotate-45' : ''
+                  } group-hover:opacity-75`}
+              />
+            </div>
+          </div>
+                  <div 
+              className="hidden md:flex items-center gap-1 cursor-pointer"
+              style={{ color: navTextColor }}
+            >
+              <IoLocationOutline size={20} />
+              <span className="text-sm font-medium">Location</span>
+            </div>
 
           <div className="logo-container flex items-center md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 order-1 md:order-none">
             <img src={logo} alt={logoAlt} className="logo h-[28px]" />
           </div>
 
-          <button
-            type="button"
-            className="card-nav-cta-button hidden md:inline-flex border-0 rounded-[calc(0.75rem-0.2rem)] px-4 items-center h-full font-medium cursor-pointer transition-colors duration-300"
-            style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
-            onClick={() => router.push('/billing')} // <-- ADD THIS
-          >
-            Go to Billing
-          </button>
+          {/* --- RIGHT GROUP --- */}
+          <div className="flex items-center gap-2 md:gap-4 order-3 md:order-none">
+
+            {/* --- EXISTING: Billing Button --- */}
+            <button
+              type="button"
+              className="card-nav-cta-button hidden md:inline-flex border-0 rounded-[calc(0.75rem-0.2rem)] px-4 items-center h-[44px] font-medium cursor-pointer transition-colors duration-300"
+              style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
+              onClick={() => router.push('/billing')} // <-- ADD THIS
+            >
+              Go to Billing
+            </button>
+
+            {/* --- NEW: Profile Div (Circle) --- */}
+            <div 
+              className="flex items-center justify-center w-10 h-10 bg-gray-700 rounded-full cursor-pointer"
+              style={{ color: navTextColor }}
+            >
+              <FaUser size={18} />
+            </div>
+          </div>
         </div>
 
         <div
           className={`card-nav-content absolute left-0 right-0 top-[60px] bottom-0 p-2 flex flex-col items-stretch gap-2 justify-start z-[1] ${isExpanded ? 'visible pointer-events-auto' : 'invisible pointer-events-none'
             } md:flex-row md:items-end md:gap-[12px]`}
           aria-hidden={!isExpanded}
-        >
+        >
           {(items || []).slice(0, 3).map((item, idx) => (
             <div
               key={`${item.label}-${idx}`}
@@ -236,10 +259,10 @@ const CardNav: React.FC<CardNavProps> = ({
                 className="nav-card select-none relative flex flex-col justify-between p-[12px_16px] rounded-[calc(0.75rem-0.2rem)] min-w-0 flex-[1_1_auto] h-auto min-h-[60px] md:h-full md:min-h-0 md:flex-[1_1_0%] cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
                 ref={setCardRef(idx)}
                 style={{ backgroundColor: item.bgColor, color: item.textColor }}
-               onClick={() => {
+                onClick={() => {
                   const link = item.links?.[0]?.href;
                   if (link) window.location.href = link;
-               }}
+                }}
               >
                 <div className="nav-card-label font-normal tracking-[-0.5px] text-[18px] md:text-[22px]">
                   {item.label}
@@ -254,14 +277,6 @@ const CardNav: React.FC<CardNavProps> = ({
           ))}
         </div>
       </nav>
-
-      {/* --- NEW: Floating Profile Div --- */}
-      <div 
-        className="hidden md:flex items-center justify-center w-10 h-10 bg-gray-700 rounded-full cursor-pointer absolute left-full top-1/2 -translate-y-1/2 ml-4"
-        style={{ color: floatingElementColor }}
-      >
-        <FaUser size={18} />
-      </div>
     </div>
   );
 };
