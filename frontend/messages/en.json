@@ -1,28 +1,56 @@
 {
   "Dashboard": {
     "title": "Dashboard",
-    "loading": "Loading user data...",
-    "logoAlt": "Company Logo",
+    "loadingUserData": "Loading user data...",
     "nav": {
       "about": "About",
-      "aboutCompany": "About Company",
       "company": "Company",
+      "aboutCompany": "About Company",
       "careers": "Careers",
       "aboutCareers": "About Careers",
       "billing": "Billing",
-      "billingAriaLabel": "Billing",
-      "billingLink": "Billing",
+      "featuredProjects": "Featured Projects",
       "distributors": "Distributors",
-      "emailAriaLabel": "Email us",
       "email": "Email",
-      "twitterAriaLabel": "Twitter",
+      "emailUs": "Email us",
       "twitter": "Twitter",
-      "linkedinAriaLabel": "LinkedIn",
       "linkedin": "LinkedIn"
-    },
-    "charts": {
-      "salesForecastTitle": "Weekly Sales Forecast",
-      "priceSuggestionTitle": "AI Price Suggestions"
     }
+  },
+  "AnalyticsTable": {
+    "title": "Key Metrics",
+    "loading": "Loading Analytics...",
+    "errorPrefix": "Error: ",
+    "errorNoUserId": "No user ID provided.",
+    "changeSuffix": "from last month",
+    "totalRevenue": "Total Revenue",
+    "newCustomers": "New Customers",
+    "conversionRate": "Conversion Rate",
+    "avgOrderValue": "Avg. Order Value"
+  },
+  "InventoryTable": {
+    "loading": "Ladataan varastoa...",
+    "errorTitle": "Virhe: Varaston nouto epäonnistui",
+    "retry": "Yritä uudelleen",
+    "title": "Nykyinen varasto",
+    "itemCount": "{count, plural, one {# tuote} other {# tuotetta}}",
+    "header": {
+      "productName": "Tuotteen nimi",
+      "country": "Maa",
+      "quantity": "Määrä",
+      "price": "Hinta",
+      "month": "Kuukausi"
+    },
+    "empty": {
+      "message": "Ei tuotteita varastossa",
+      "prompt": "Lisää tuotteita oikealla olevalla lomakkeella"
+    }
+  },
+  "InventoryAlerts": {
+    "title": "Inventory Alerts",
+    "lowStock": "Low Stock",
+    "expiringSoon": "Expiring Soon",
+    "quantity": "Qty: {level}",
+    "viewAll": "View All Inventory"
   }
 }

@@ -1,27 +1,56 @@
-{"Dashboard": {
+{
+  "Dashboard": {
     "title": "Kojelauta",
-    "loading": "Ladataan käyttäjätietoja...",
-    "logoAlt": "Yrityksen logo",
+    "loadingUserData": "Ladataan käyttäjätietoja...",
     "nav": {
       "about": "Tietoja",
-      "aboutCompany": "Tietoja yrityksestä",
       "company": "Yritys",
-      "careers": "Ura",
+      "aboutCompany": "Tietoja yrityksestä",
+      "careers": "Urat",
       "aboutCareers": "Tietoja uramahdollisuuksista",
       "billing": "Laskutus",
-      "billingAriaLabel": "Laskutus",
-      "billingLink": "Laskutus",
-      "distributors": "Jälleenmyyjät",
-      "emailAriaLabel": "Lähetä meille sähköpostia",
+      "featuredProjects": "Esitellyt projektit",
+      "distributors": "Jakelijat",
       "email": "Sähköposti",
-      "twitterAriaLabel": "Twitter",
+      "emailUs": "Lähetä meille sähköpostia",
       "twitter": "Twitter",
-      "linkedinAriaLabel": "LinkedIn",
       "linkedin": "LinkedIn"
-    },
-    "charts": {
-      "salesForecastTitle": "Viikoittainen myyntiennuste",
-      "priceSuggestionTitle": "Tekoälyn hintaehdotukset"
     }
+  },
+  "AnalyticsTable": {
+    "title": "Avainluvut",
+    "loading": "Ladataan analytiikkaa...",
+    "errorPrefix": "Virhe: ",
+    "errorNoUserId": "Käyttäjätunnusta ei annettu.",
+    "changeSuffix": "viime kuukaudesta",
+    "totalRevenue": "Kokonaistuotot",
+    "newCustomers": "Uudet asiakkaat",
+    "conversionRate": "Konversioprosentti",
+    "avgOrderValue": "Tilauksen keskiarvo"
+  },
+  "InventoryTable": {
+    "loading": "Ladataan varastoa...",
+    "errorTitle": "Virhe: Varaston nouto epäonnistui",
+    "retry": "Yritä uudelleen",
+    "title": "Nykyinen varasto",
+    "itemCount": "{count, plural, one {# tuote} other {# tuotetta}}",
+    "header": {
+      "productName": "Tuotteen nimi",
+      "country": "Maa",
+      "quantity": "Määrä",
+      "price": "Hinta",
+      "month": "Kuukausi"
+    },
+    "empty": {
+      "message": "Ei tuotteita varastossa",
+      "prompt": "Lisää tuotteita oikealla olevalla lomakkeella"
+    }
+  },
+  "InventoryAlerts": {
+    "title": "Varastohälytykset",
+    "lowStock": "Vähissä varastossa",
+    "expiringSoon": "Vanhenee pian",
+    "quantity": "Määrä: {level}",
+    "viewAll": "Katso koko varasto"
   }
 }

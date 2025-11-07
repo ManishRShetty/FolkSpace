@@ -1,7 +1,14 @@
 // components/widgets/WeatherWidget.tsx
 "use client";
 import { useEffect, useState } from "react";
-import { Sun, Cloud, CloudRain, CloudSnow, Wind, Thermometer } from "lucide-react";
+import {
+  Sun,
+  Cloud,
+  CloudRain,
+  CloudSnow,
+  Wind,
+  Thermometer,
+} from "lucide-react";
 
 interface WeatherWidgetProps {
   locationName: string | null;
@@ -14,12 +21,77 @@ interface WeatherData {
   icon: JSX.Element;
 }
 
+// Default mock data for presentation
+const mockWeather: WeatherData = {
+  temperature: 12,
+  windspeed: 15,
+  description: "Cloudy",
+  icon: <Cloud />,
+};
+
+// Mock data for different locations
+const mockDataStore: Record<string, WeatherData> = {
+  Sweden: {
+    temperature: 5,
+    windspeed: 20,
+    description: "Snowy",
+    icon: <CloudSnow />,
+  },
+  Finland: {
+    temperature: 2,
+    windspeed: 18,
+    description: "Very Cold",
+    icon: <CloudSnow />,
+  },
+  Norway: {
+    temperature: 8,
+    windspeed: 25,
+    description: "Windy",
+    icon: <Wind />,
+  },
+  Denmark: {
+    temperature: 10,
+    windspeed: 12,
+    description: "Rainy",
+    icon: <CloudRain />,
+  },
+  Iceland: {
+    temperature: 1,
+    windspeed: 30,
+    description: "Icy",
+    icon: <Thermometer />,
+  },
+};
+
 const WeatherWidget: React.FC<WeatherWidgetProps> = ({ locationName }) => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Start loading initially
 
   useEffect(() => {
-    if (!locationName) return;
+    // --- MOCK LOGIC FOR PRESENTATION ---
+    // This part simulates a fetch for different locations
+    setLoading(true);
+
+    // Simulate API delay
+    const timer = setTimeout(() => {
+      if (locationName && mockDataStore[locationName]) {
+        setWeather(mockDataStore[locationName]);
+      } else {
+        setWeather(mockWeather); // Fallback to default mock
+      }
+      setLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+    // --- END OF MOCK LOGIC ---
+
+    // --- REAL FETCH LOGIC (Commented out for presentation) ---
+    /*
+    if (!locationName) {
+      setWeather(null);
+      setLoading(false);
+      return;
+    }
 
     const fetchWeather = async () => {
       setLoading(true);
@@ -61,18 +133,21 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ locationName }) => {
         });
       } catch (error) {
         console.error("Error fetching weather:", error);
+        setWeather(null); // Clear weather on error
       } finally {
         setLoading(false);
       }
     };
 
     fetchWeather();
+    */
+    // --- END OF REAL FETCH LOGIC ---
   }, [locationName]);
 
   return (
     <div className="p-4 text-center">
       <h3 className="text-lg font-semibold mb-2">
-        {locationName || "Select a Location"}
+        {locationName || "Nordic Weather"}
       </h3>
       {loading ? (
         <p>Loading weather...</p>
@@ -81,7 +156,9 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ locationName }) => {
           <div className="text-4xl">{weather.icon}</div>
           <p className="text-xl font-bold">{weather.temperature}°C</p>
           <p className="text-sm text-gray-400">{weather.description}</p>
-          <p className="text-xs text-gray-500">Wind: {weather.windspeed} km/h</p>
+          <p className="text-xs text-gray-500">
+            Wind: {weather.windspeed} km/h
+          </p>
         </div>
       ) : (
         <p>No weather data.</p>
