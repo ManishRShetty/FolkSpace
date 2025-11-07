@@ -5,7 +5,7 @@ import { useState, FormEvent } from 'react';
 interface Props {
   userId: string;
 }
-
+const BACK_END_URL = process.env.NEXT_PUBLIC_BACK_END_URL;
 export function AddAgentForm({ userId }: Props) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -16,7 +16,7 @@ export function AddAgentForm({ userId }: Props) {
     setMessage('');
     
     try {
-      const res = await fetch(`http://localhost:8000/addDeliveryAgent/${userId}`, {
+      const res = await fetch(`${BACK_END_URL}/addDeliveryAgent/${userId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, phone, status: 'inactive' }),

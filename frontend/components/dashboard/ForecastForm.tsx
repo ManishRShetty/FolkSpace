@@ -6,14 +6,14 @@ export function ForecastForm() {
   const [period, setPeriod] = useState('30'); // Default to 30 days
   const [forecastResult, setForecastResult] = useState<any | null>(null);
   const [message, setMessage] = useState('');
-
+const BACK_END_URL = process.env.NEXT_PUBLIC_BACK_END_URL;
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setMessage('');
     setForecastResult(null);
     
     try {
-      const res = await fetch(`http://localhost:8000/forecast`, {
+      const res = await fetch(`${BACK_END_URL}/forecast`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ days: parseInt(period) }),

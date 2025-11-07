@@ -2,38 +2,89 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithPopup, getAdditionalUserInfo } from "firebase/auth"; // Import getAdditionalUserInfo
-import { auth, googleProvider } from "@/lib/firebase"; // Make sure googleProvider is exported
+// Import for email/password sign-in
+import { signInWithEmailAndPassword } from "firebase/auth";
+// No longer need googleProvider
+import { auth } from "@/lib/firebase";
+
+// --- ATTENTION ---
+// Make sure your .env.local file is set up
+const BACK_END_URL = process.env.NEXT_PUBLIC_BACK_END_URL;
 
 export default function LoginPage() {
+  // New state for email and password
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Handles the Google Sign-In popup flow
-  const handleGoogleSignIn = async () => {
+  // --- NEW: Handles Email/Password Sign-In ---
+  const handleEmailSignIn = async (e: React.FormEvent) => {
+    // Prevent form from reloading the page
+    e.preventDefault();
     setError(null);
-    try {
-      // Sign in with Google
-      const result = await signInWithPopup(auth, googleProvider);
-      
-      // Get additional user info to check if they are new
-      const additionalInfo = getAdditionalUserInfo(result);
 
-      if (additionalInfo?.isNewUser) {
-        // Redirect new users to the onboarding page
-        router.push("/onboarding");
-      } else {
-        // Redirect existing users to the dashboard
-        router.push("/dashboard");
+    try {
+      // 1. Sign in with Firebase Auth
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const user = result.user;
+      const idToken = await user.getIdToken();
+
+      // --- LOGIC FROM PREVIOUS STEP (Unchanged) ---
+      // 2. Call your backend for ALL users
+      try {
+        const response = await fetch(`${BACK_END_URL}/create-db`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Send the Firebase ID token for backend authentication
+            "Authorization": `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({
+            // displayName might be null, so use email as a fallback
+            username: user.displayName || user.email || "New User",
+            email: user.email,
+            region: null,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Failed to create/get database entry.");
+        }
+
+        // 3. Get response and STORE userId in localStorage
+        const data = await response.json();
+        if (data.userId) {
+          localStorage.setItem("userId", data.userId);
+        } else {
+          throw new Error("Backend response is missing 'userId'.");
+        }
+
+      } catch (apiError: any) {
+        console.error("Error calling /create-db:", apiError);
+        setError(`Sign-in successful, but failed to sync account: ${apiError.message}`);
+        return; // Don't redirect
       }
+      // --- END LOGIC FROM PREVIOUS STEP ---
+
+      // 4. Redirect ALL users to the dashboard
+      // The isNewUser check is not possible with email/password sign in
+      router.push("/dashboard");
 
     } catch (err: any) {
-      if (err.code === "auth/popup-closed-by-user") {
-        setError("Sign-in cancelled.");
+      // Handle Firebase sign-in errors
+      console.error("Error with Email Sign-in:", err);
+      if (
+        err.code === "auth/user-not-found" ||
+        err.code === "auth/wrong-password" ||
+        err.code === "auth/invalid-credential"
+      ) {
+        setError("Invalid email or password. Please try again.");
       } else {
         setError("An unexpected error occurred. Please try again later.");
       }
-      console.error("Error with Google Sign-in:", err);
     }
   };
 
@@ -47,30 +98,59 @@ export default function LoginPage() {
           Sign In
         </h1>
 
-        {/* Google Sign-In Button */}
-        <button
-          type="button"
-          onClick={handleGoogleSignIn}
-          className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:focus:ring-offset-gray-900"
-        >
-          {/* Simple Google SVG Icon */}
-          <svg
-            className="mr-2 h-5 w-5"
-            aria-hidden="true"
-            focusable="false"
-            data-prefix="fab"
-            data-icon="google"
-            role="img"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 488 512"
-          >
-            <path
-              fill="currentColor"
-              d="M488 261.8C488 400.3 378.1 504 244 504 110.1 504 0 393.9 0 259.8S110.1 15.6 244 15.6c70.9 0 131.5 27.7 176.4 72.9l-63.1 61.9C333.5 124.3 290.1 101.9 244 101.9c-109.3 0-199.1 90.1-199.1 200.2S134.7 402.3 244 402.3c119.3 0 172.6-84.3 179-131.8H244v-80.9h244z"
-            ></path>
-          </svg>
-          Sign in with Google
-        </button>
+        {/* --- NEW Email/Password Form --- */}
+        <form onSubmit={handleEmailSignIn} className="space-y-6">
+          {/* Email Input */}
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+            >
+              Email address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            />
+          </div>
+
+          {/* Password Input */}
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            />
+          </div>
+
+          {/* Submit Button */}
+          <div>
+            <button
+              type="submit"
+              className="flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-offset-gray-900"
+            >
+              Sign In
+            </button>
+          </div>
+        </form>
+        {/* --- END New Form --- */}
 
         {/* Error Message Display */}
         {error && (

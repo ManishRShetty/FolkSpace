@@ -8,7 +8,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recha
 interface Props {
   userId: string;
 }
-
+const BACK_END_URL = process.env.NEXT_PUBLIC_BACK_END_URL;
 export function TopSoldLastYear({ userId }: Props) {
   const [products, setProducts] = useState<TopSoldProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,19 +20,19 @@ export function TopSoldLastYear({ userId }: Props) {
         setLoading(true);
         // Mock data, as /top-sold/:userId isn't in the backend package.json
         // Replace with actual fetch when ready
-        // const res = await fetch(`http://localhost:8000/top-sold/${userId}`);
-        // if (!res.ok) throw new Error('Failed to fetch top sold');
-        // const data: TopSoldProduct[] = await res.json();
+        const res = await fetch(`${BACK_END_URL}/top-sold/${userId}`);
+        if (!res.ok) throw new Error('Failed to fetch top sold');
+        const data: TopSoldProduct[] = await res.json();
         
         // --- Mock Data Start ---
         await new Promise(res => setTimeout(res, 700)); // Simulate network delay
-        const data: TopSoldProduct[] = [
-          { _id: 'p1', productName: 'Product A', unitsSold: 1200, revenue: 24000 },
-          { _id: 'p2', productName: 'Product B', unitsSold: 950, revenue: 19000 },
-          { _id: 'p3', productName: 'Product C', unitsSold: 800, revenue: 15000 },
-          { _id: 'p4', productName: 'Product D', unitsSold: 600, revenue: 22000 },
-          { _id: 'p5', productName: 'Product E', unitsSold: 450, revenue: 9000 },
-        ];
+        // const data: TopSoldProduct[] = [
+        //   { _id: 'p1', productName: 'Product A', unitsSold: 1200, revenue: 24000 },
+        //   { _id: 'p2', productName: 'Product B', unitsSold: 950, revenue: 19000 },
+        //   { _id: 'p3', productName: 'Product C', unitsSold: 800, revenue: 15000 },
+        //   { _id: 'p4', productName: 'Product D', unitsSold: 600, revenue: 22000 },
+        //   { _id: 'p5', productName: 'Product E', unitsSold: 450, revenue: 9000 },
+        // ];
         // --- Mock Data End ---
         
         setProducts(data);

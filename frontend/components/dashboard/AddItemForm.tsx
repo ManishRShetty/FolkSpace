@@ -4,8 +4,9 @@ import { useState, FormEvent } from 'react';
 
 interface Props {
   userId: string;
-}
 
+}
+const BACK_END_URL = process.env.NEXT_PUBLIC_BACK_END_URL;
 export function AddItemForm({ userId }: Props) {
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('');
@@ -19,7 +20,7 @@ export function AddItemForm({ userId }: Props) {
     try {
       // Make sure your backend server is running!
       // This assumes it's on http://localhost:8000
-      const res = await fetch(`http://localhost:8000/add-item/${userId}`, {
+      const res = await fetch(`${BACK_END_URL}/add-item/${userId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

@@ -6,7 +6,7 @@ import { InventoryItem } from '@/types/index'; // Using the types file we define
 interface Props {
   userId: string;
 }
-
+const BACK_END_URL = process.env.NEXT_PUBLIC_BACK_END_URL;
 export function InventoryTable({ userId }: Props) {
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ export function InventoryTable({ userId }: Props) {
     const fetchItems = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`http://localhost:8000/getItems/${userId}`);
+        const res = await fetch(`${BACK_END_URL}getItems/${userId}`);
         if (!res.ok) throw new Error('Failed to fetch inventory');
         const data: InventoryItem[] = await res.json();
         setItems(data);

@@ -6,7 +6,7 @@ import { DeliveryAgent } from '@/types';
 interface Props {
   userId: string;
 }
-
+const BACK_END_URL = process.env.NEXT_PUBLIC_BACK_END_URL;
 export function AgentsList({ userId }: Props) {
   const [agents, setAgents] = useState<DeliveryAgent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ export function AgentsList({ userId }: Props) {
     const fetchAgents = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`http://localhost:8000/getDeliveryAgents/${userId}`);
+        const res = await fetch(`${BACK_END_URL}/getDeliveryAgents/${userId}`);
         if (!res.ok) throw new Error('Failed to fetch agents');
         const data: DeliveryAgent[] = await res.json();
         setAgents(data);

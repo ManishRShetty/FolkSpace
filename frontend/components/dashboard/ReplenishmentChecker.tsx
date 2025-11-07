@@ -12,7 +12,7 @@ interface ReplenishResult {
   needsRestock: boolean;
   orderPlaced: boolean;
 }
-
+const BACK_END_URL = process.env.NEXT_PUBLIC_BACK_END_URL;
 export function ReplenishmentChecker({ userId }: Props) {
   const [results, setResults] = useState<ReplenishResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +24,7 @@ export function ReplenishmentChecker({ userId }: Props) {
     setResults([]);
     
     try {
-      const res = await fetch(`http://localhost:8000/replenish/check/${userId}`, {
+      const res = await fetch(`${BACK_END_URL}/replenish/check/${userId}`, {
         method: 'POST',
       });
       if (!res.ok) throw new Error('Failed to run check');

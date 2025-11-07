@@ -7,7 +7,7 @@ interface Props {
   // Assuming country is dynamic, e.g., from user's profile
   country: string; 
 }
-
+const BACK_END_URL = process.env.NEXT_PUBLIC_BACK_END_URL;
 export function RegionalTopTable({ country }: Props) {
   const [products, setProducts] = useState<TopSoldProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,19 +19,18 @@ export function RegionalTopTable({ country }: Props) {
     const fetchRegionalTop = async () => {
       try {
         setLoading(true);
-        // Mock data, as /regional-top/:country isn't in backend
-        // Replace with actual fetch when ready
-        // const res = await fetch(`http://localhost:8000/regional-top/${country}`);
-        // if (!res.ok) throw new Error('Failed to fetch regional data');
-        // const data: TopSoldProduct[] = await res.json();
+      
+        const res = await fetch(`${BACK_END_URL}/regional-top/${country}`);
+        if (!res.ok) throw new Error('Failed to fetch regional data');
+        const data: TopSoldProduct[] = await res.json();
         
         // --- Mock Data Start ---
-        await new Promise(res => setTimeout(res, 600)); // Simulate network delay
-        const data: TopSoldProduct[] = [
-          { _id: 'r1', productName: 'Regional Item X', unitsSold: 5000, revenue: 50000 },
-          { _id: 'r2', productName: 'Regional Item Y', unitsSold: 4200, revenue: 30000 },
-          { _id: 'r3', productName: 'Product B', unitsSold: 3000, revenue: 60000 },
-        ];
+        // await new Promise(res => setTimeout(res, 600)); // Simulate network delay
+        // const data: TopSoldProduct[] = [
+        //   { _id: 'r1', productName: 'Regional Item X', unitsSold: 5000, revenue: 50000 },
+        //   { _id: 'r2', productName: 'Regional Item Y', unitsSold: 4200, revenue: 30000 },
+        //   { _id: 'r3', productName: 'Product B', unitsSold: 3000, revenue: 60000 },
+        // ];
         // --- Mock Data End ---
         
         setProducts(data);

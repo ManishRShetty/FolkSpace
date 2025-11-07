@@ -5,7 +5,7 @@ import { useState, FormEvent } from 'react';
 interface Props {
   userId: string;
 }
-
+const BACK_END_URL = process.env.NEXT_PUBLIC_BACK_END_URL;
 export function DynamicPricingForm({ userId }: Props) {
   const [productId, setProductId] = useState('');
   const [message, setMessage] = useState('');
@@ -18,7 +18,7 @@ export function DynamicPricingForm({ userId }: Props) {
     
     try {
       // NOTE: Ensure your backend is running, e.g., on http://localhost:8000
-      const res = await fetch(`http://localhost:8000/dynamic-pricing/${userId}`, {
+      const res = await fetch(`${BACK_END_URL}/dynamic-pricing/${userId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productId }),
