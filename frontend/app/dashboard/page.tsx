@@ -59,24 +59,20 @@ const items = [
     ],
   },
   {
-    label: 'Projects',
+    label: 'Billing',
     bgColor: 'var(--color-bg-surface)',
     textColor: 'var(--color-text-primary)',
     links: [
       {
-        label: 'Featured',
+        label: 'billing',
         ariaLabel: 'Featured Projects',
-        href: '/landing',
+        href: '/billing',
       },
-      {
-        label: 'Case Studies',
-        ariaLabel: 'Project Case Studies',
-        href: '/projects/case-studies',
-      },
+      
     ],
   },
   {
-    label: 'Contact',
+    label: 'Distributors',
     bgColor: 'var(--color-bg-surface)',
     textColor: 'var(--color-text-primary)',
     links: [
