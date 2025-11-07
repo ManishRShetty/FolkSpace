@@ -20,18 +20,18 @@ export function AnalyticsTable({ userId }: Props) {
         setLoading(true);
         // Mock data, as /analytics/:userId isn't in the backend package.json
         // Replace with actual fetch when ready
-        // const res = await fetch(`http://localhost:8000/analytics/${userId}`);
-        // if (!res.ok) throw new Error('Failed to fetch analytics');
-        // const data: KpiMetric[] = await res.json();
+        const res = await fetch(`${NEXT_PUBLIC_BACKEND_URL}/analytics/${userId}`);
+        if (!res.ok) throw new Error('Failed to fetch analytics');
+        const data: KpiMetric[] = await res.json();
         
         // --- Mock Data Start ---
         await new Promise(res => setTimeout(res, 500)); // Simulate network delay
-        const data: KpiMetric[] = [
-          { _id: '1', metric: 'Total Revenue', value: '€45,231.89', change: '+20.1%' },
-          { _id: '2', metric: 'Subscriptions', value: '+2350', change: '+180.1%' },
-          { _id: '3', metric: 'Sales', value: '+12,234', change: '+19%' },
-          { _id: '4', metric: 'Active Users', value: '+573', change: '-2.5%' },
-        ];
+        // const data: KpiMetric[] = [
+        //   { _id: '1', metric: 'Total Revenue', value: '€45,231.89', change: '+20.1%' },
+        //   { _id: '2', metric: 'Subscriptions', value: '+2350', change: '+180.1%' },
+        //   { _id: '3', metric: 'Sales', value: '+12,234', change: '+19%' },
+        //   { _id: '4', metric: 'Active Users', value: '+573', change: '-2.5%' },
+        // ];
         // --- Mock Data End ---
         
         setMetrics(data);

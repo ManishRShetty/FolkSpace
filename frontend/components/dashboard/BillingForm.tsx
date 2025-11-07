@@ -5,7 +5,7 @@ import { useState, FormEvent } from 'react';
 interface Props {
   userId: string;
 }
-
+const BACK_END_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 export function BillingForm({ userId }: Props) {
   const [cart, setCart] = useState<{ productId: string, quantity: number }[]>([
     { productId: '', quantity: 1 }
@@ -34,7 +34,7 @@ export function BillingForm({ userId }: Props) {
         return;
       }
 
-      const res = await fetch(`http://localhost:8000/bill/${userId}`, {
+      const res = await fetch(`${BACK_END_URL}/bill/${userId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items: validItems }),

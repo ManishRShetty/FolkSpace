@@ -92,6 +92,12 @@ const CardNav: React.FC<CardNavProps> = ({
   const toggleLanguage = () => {
     setActiveDropdown(activeDropdown === "language" ? null : "language");
   };
+//const router = useRouter(); // 2. Initialize the router
+
+  // 3. Create a function to handle the navigation
+  const handleNavigate = () => {
+    router.push("/profile"); // 4. Use router.push() to navigate
+  };
 
   // Click-outside listener
   useEffect(() => {
@@ -350,9 +356,12 @@ const CardNav: React.FC<CardNavProps> = ({
       {/* --- Floating Profile & Language Buttons --- */}
       <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 flex items-center gap-4">
         {/* Profile Button */}
-        <div className="hidden md:flex items-center justify-center w-11 h-11 bg-white text-gray-900 rounded-full cursor-pointer shadow-md transition-all duration-300 ease-in-out hover:bg-gray-100 hover:scale-110">
-          <FaUser size={20} />
-        </div>
+        <div
+      className="hidden md:flex items-center justify-center w-11 h-11 bg-white text-gray-900 rounded-full cursor-pointer shadow-md transition-all duration-300 ease-in-out hover:bg-gray-100 hover:scale-110"
+      onClick={handleNavigate} // 5. Call your function on click
+    >
+      <FaUser size={20} />
+    </div>
 
         {/* Language Switcher */}
         <div ref={languageRef}>

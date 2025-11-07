@@ -5,7 +5,7 @@ import { useState, FormEvent } from 'react';
 interface Props {
   userId: string;
 }
-const BACK_END_URL = process.env.NEXT_PUBLIC_BACK_END_URL;
+const BACK_END_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 export function DynamicPricingForm({ userId }: Props) {
   const [productId, setProductId] = useState('');
   const [message, setMessage] = useState('');
