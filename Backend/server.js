@@ -248,36 +248,60 @@ app.get("/getDeliveryAgentsByLocation/:userId/:location", async (req, res) => {
 });
 
 
+//Need to update 2nd line
 app.post("/forecast", async (req, res) => {
   try {
-    const { country, product, month } = req.body || {};
-    if (!country || !product || !month) {
-      return res.status(400).json({ error: "Missing required fields: country, product, month" });
+    //Bro lets update this lateree
+    const { country, product_name, month, avg_price, promotion, previous_sales, season_index, economic_index, stock_level } = req.body;
+
+    if (!country || !product_name || !month) {
+      return res.status(400).json({ error: "Missing required fields: country, product_name, month" });
     }
 
-    const countryCode = encodeCountry(country);
-    const productCode = encodeProduct(product);
-    const m = Number(month);
 
-    const demand = Number(random_forest(productCode, m, countryCode));
-    const suggestedStock = Math.round(demand * 1.2); // 20% buffer
-    const suggestedPrice = 45 + (demand % 11) - 5;   // simple price signal around 45
+    const pythonResponse = await fetch("http://localhost:8000/forecast", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        product_name,
+        month,
+        country,
+        avg_price: avg_price || 50,
+        promotion: promotion || 0,
+        previous_sales: previous_sales || 300,
+        season_index: season_index || 0.8,
+        economic_index: economic_index || 1.0,
+        stock_level: stock_level || 400,
+      }),
+    });
 
-    res.json({
+    const data = await pythonResponse.json();
+
+    if (!pythonResponse.ok || !data.success) {
+      return res.status(500).json({
+        success: false,
+        message: "Forecast service failed",
+        details: data.error || "Unknown error from Python service",
+      });
+    }
+
+    res.status(200).json({
       success: true,
-      country,
-      product,
-      month: m,
-      demand,
-      suggestedStock,
-      suggestedPrice: Number(suggestedPrice.toFixed(2)),
-      note: "Replace stub with real ML for production use.",
+      source: "python-ml",
+      forecasted_sales: data.forecasted_sales,
+      suggested_stock: data.suggested_stock,
+      note: "Predicted by Python ML microservice",
     });
   } catch (error) {
-    console.error("Error in /forecast:", error);
-    res.status(500).json({ success: false, error: error.message });
+    console.error("Error calling Python forecast service:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to connect to ML microservice",
+      error: error.message,
+    });
   }
 });
+
 
 app.get("/analytics/:userId", async (req, res) => {
   const { userId } = req.params;
