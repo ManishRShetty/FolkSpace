@@ -1,0 +1,27 @@
+{"Dashboard": {
+    "title": "Kojelauta",
+    "loading": "Ladataan käyttäjätietoja...",
+    "logoAlt": "Yrityksen logo",
+    "nav": {
+      "about": "Tietoja",
+      "aboutCompany": "Tietoja yrityksestä",
+      "company": "Yritys",
+      "careers": "Ura",
+      "aboutCareers": "Tietoja uramahdollisuuksista",
+      "billing": "Laskutus",
+      "billingAriaLabel": "Laskutus",
+      "billingLink": "Laskutus",
+      "distributors": "Jälleenmyyjät",
+      "emailAriaLabel": "Lähetä meille sähköpostia",
+      "email": "Sähköposti",
+      "twitterAriaLabel": "Twitter",
+      "twitter": "Twitter",
+      "linkedinAriaLabel": "LinkedIn",
+      "linkedin": "LinkedIn"
+    },
+    "charts": {
+      "salesForecastTitle": "Viikoittainen myyntiennuste",
+      "priceSuggestionTitle": "Tekoälyn hintaehdotukset"
+    }
+  }
+}

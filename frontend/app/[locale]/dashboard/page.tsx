@@ -3,7 +3,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { getUserId, getUserInfo } from '@/lib/api';
-
+import { useTranslations } from 'next-intl';
 // --- REMOVED MagicBento imports ---
 // import MagicBento, { MagicBentoCard } from '@/components/MagicBento';
 
@@ -92,7 +92,7 @@ export default function DashboardPage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [userInfo, setUserInfo] = useState<any>(null);
   const [userCountry, setUserCountry] = useState<string>('Norway');
-
+  const t = useTranslations('Dashboard');
   useEffect(() => {
     // Get user data on component mount
     const id = getUserId();
@@ -128,25 +128,12 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col h-screen">
       {/* --- FIXED: Updated CardNav props to use new palette --- */}
-      <CardNav
-        logo="/logo.svg"
-        logoAlt="Company Logo"
-        items={items}
-        baseColor="#fff"
-        menuColor="var(--color-text-primary)"
-        buttonBgColor="var(--color-bg-surface)"
-        buttonTextColor="var(--color-text-primary)"
-        ease="power3.out"
-        isLocationSwitcherOpen={isLocationSwitcherOpen}
-        onToggleLocationSwitcher={() => setIsLocationSwitcherOpen(!isLocationSwitcherOpen)}
-        selectedLocation={selectedLocation}
-        onLocationChange={setSelectedLocation}
-      />
+      <CardNav/>
       {/* <Navbar /> */}
 
       {/* --- FIXED: Updated main background and default text color --- */}
       <main className="flex-1 overflow-y-auto p-6 lg:p-8 bg-[var(--color-bg-night)] text-[var(--color-text-secondary)]">
-        {/* <h1 className="text-3xl font-bold text-gray-100 mb-6  mt-18">Dashboard</h1> */}
+        {/* <h1 className="text-3xl font-bold text-gray-100 mb-6  mt-18">{t('title')}</h1> */}
         <div className="mt-22">
           {/* --- REMOVED: <MagicBento> wrapper --- */}
 

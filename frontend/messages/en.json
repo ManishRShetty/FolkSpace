@@ -1,0 +1,28 @@
+{
+  "Dashboard": {
+    "title": "Dashboard",
+    "loading": "Loading user data...",
+    "logoAlt": "Company Logo",
+    "nav": {
+      "about": "About",
+      "aboutCompany": "About Company",
+      "company": "Company",
+      "careers": "Careers",
+      "aboutCareers": "About Careers",
+      "billing": "Billing",
+      "billingAriaLabel": "Billing",
+      "billingLink": "Billing",
+      "distributors": "Distributors",
+      "emailAriaLabel": "Email us",
+      "email": "Email",
+      "twitterAriaLabel": "Twitter",
+      "twitter": "Twitter",
+      "linkedinAriaLabel": "LinkedIn",
+      "linkedin": "LinkedIn"
+    },
+    "charts": {
+      "salesForecastTitle": "Weekly Sales Forecast",
+      "priceSuggestionTitle": "AI Price Suggestions"
+    }
+  }
+}
