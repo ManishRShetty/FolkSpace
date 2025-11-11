@@ -2,8 +2,6 @@ const express = require("express");
 
 const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
-// const cacheMiddleware = require("./middleware/cacheMiddleware");
-// const { clearCache } = require("./utils/cacheUtils"); //for cacheing redies
 
 
 require("dotenv").config(); 
