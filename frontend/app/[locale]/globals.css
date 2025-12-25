@@ -169,16 +169,18 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 
-  --color-bg-night: #FFFFFF;
-  --color-bg-surface: #F8F9FA;
+  /* === Dark Mode Theme for Dashboard === */
+  --color-bg-night: #0D1117;          /* Dark background matching landing page */
+  --color-bg-surface: #161B22;        /* Slightly lighter dark surface */
 
   /* Text & Accents */
-  --color-text-primary: #1A1A1A;
-  --color-text-secondary: #6B7280;
-  --color-border: #E5E7EB;
+  --color-text-primary: #F0F4F8;      /* Light text */
+  --color-text-secondary: #A2B4C6;    /* Muted light text */
+  --color-border: #30363D;            /* Dark border */
 
-  /* Aurora Action Colors */
+  /* Aurora Action Colors (unchanged) */
   --color-primary-green: #00F2A9;
   --color-primary-purple: #9358F7;
   --color-primary-pink: #E040FB;
 }
+
