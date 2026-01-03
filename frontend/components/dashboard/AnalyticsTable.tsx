@@ -55,11 +55,43 @@ const getMetricKey = (metricString: string): string => {
 
 export function AnalyticsTable({ userId }: Props) {
   const t = useTranslations('AnalyticsTable'); // +++ INITIALIZE HOOK
-  const useDummyData = false;
 
   const [metrics, setMetrics] = useState<KpiMetric[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Fetch analytics data
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        console.log('📊 Fetching analytics for user:', userId);
+        const response = await api.getAnalytics(userId);
+        const data = await response.json();
+
+        // Handle both formats: { metrics: [...] } or direct array
+        const metricsList = data.metrics || dummyMetrics;
+        console.log('📊 Analytics received:', metricsList);
+        setMetrics(metricsList);
+
+      } catch (err) {
+        console.error('❌ Error fetching analytics:', err);
+        // Fallback to dummy data on error
+        setMetrics(dummyMetrics);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userId) {
+      fetchAnalytics();
+    } else {
+      setError(t('errorNoUserId'));
+      setLoading(false);
+    }
+  }, [userId, t]);
 
   // --- Revised Theme Styles (Clean/Apple) ---
   // We rely on the parent GlassCard for the main background/shadow

@@ -70,5 +70,48 @@
         "retailers": "Söluaðilar"
       }
     }
+  },
+  "AddItemForm": {
+    "title": "Bæta við nýrri vöru",
+    "productNameLabel": "Vöruheiti *",
+    "productNamePlaceholder": "t.d., Sjampó, Tannkrem",
+    "countryLabel": "Land *",
+    "countryPlaceholder": "Veldu land",
+    "countries": {
+      "denmark": "Danmörk",
+      "finland": "Finnland",
+      "iceland": "Ísland",
+      "norway": "Noregur",
+      "sweden": "Svíþjóð"
+    },
+    "monthLabel": "Mánuður *",
+    "monthPlaceholder": "Veldu mánuð",
+    "months": {
+      "1": "Janúar",
+      "2": "Febrúar",
+      "3": "Mars",
+      "4": "Apríl",
+      "5": "Maí",
+      "6": "Júní",
+      "7": "Júlí",
+      "8": "Ágúst",
+      "9": "September",
+      "10": "Október",
+      "11": "Nóvember",
+      "12": "Desember"
+    },
+    "quantityLabel": "Magn *",
+    "salesLabel": "Sala",
+    "salesPlaceholder": "0",
+    "costPriceLabel": "Kostnaðarverð (€)",
+    "sellingPriceLabel": "Söluverð (€)",
+    "currentPriceLabel": "Núverandi verð (€)",
+    "pricePlaceholder": "0.00",
+    "expiryDateLabel": "Fyrningardagur",
+    "buttonText": "Bæta við vöru",
+    "buttonLoadingText": "Bæti við...",
+    "successMessage": "Vöru bætt við!",
+    "errorMessage": "Tókst ekki að bæta við vöru",
+    "errorNoUserId": "Ekkert notandaauðkenni tiltækt"
   }
 }
