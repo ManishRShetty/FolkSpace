@@ -1,12 +1,12 @@
 // app/dashboard/page.tsx
 
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getUserId, getUserInfo } from '@/lib/api';
 import { useTranslations } from 'next-intl';
 import Aurora from "@/components/Aurora";
 
-import WeatherWidget from '@/components/widgets/WeatherWidget';
+import WeatherWidget, { WeatherGradient, weatherGradients } from '@/components/widgets/WeatherWidget';
 import { InventoryAlerts } from '@/components/widgets/InventoryAlerts';
 import CardNav from '@/components/CardNav';
 
@@ -40,6 +40,15 @@ export default function DashboardPage() {
   const [userInfo, setUserInfo] = useState<any>(null);
   const [userCountry, setUserCountry] = useState<string>('Norway');
 
+  // --- Dynamic Weather Gradient ---
+  const [gradientColors, setGradientColors] = useState<[string, string, string]>(
+    weatherGradients.Default.colorStops
+  );
+
+  const handleWeatherChange = useCallback((gradient: WeatherGradient) => {
+    setGradientColors(gradient.colorStops);
+  }, []);
+
   useEffect(() => {
     const id = getUserId();
     const info = getUserInfo();
@@ -54,9 +63,9 @@ export default function DashboardPage() {
   return (
     <div className="relative min-h-screen bg-[#F5F5F7] font-sans antialiased text-[#1D1D1F] selection:bg-[#007AFF] selection:text-white">
 
-      {/* --- Ambient Background --- */}
-      <div className="fixed inset-0 z-0 opacity-40 pointer-events-none mix-blend-soft-light decoration-clone">
-        <Aurora colorStops={["#E0F2FE", "#F3E8FF", "#FCE7F3"]} blend={0.8} amplitude={0.5} speed={0.2} />
+      {/* --- Ambient Background (Dynamic based on weather) --- */}
+      <div className="fixed inset-0 z-0 opacity-60 pointer-events-none transition-colors duration-1000">
+        <Aurora colorStops={gradientColors} blend={0.6} amplitude={0.5} speed={0.3} />
       </div>
 
       <div className="relative z-10 flex flex-col min-h-screen">
@@ -82,11 +91,11 @@ export default function DashboardPage() {
 
           {/* --- Demo Notice Banner --- */}
           <div className="mb-8 px-2">
-            <div className="relative w-full rounded-xl overflow-hidden bg-gradient-to-r from-amber-50/90 to-orange-50/90 backdrop-blur-xl border border-amber-200/50 px-5 py-3 shadow-sm">
+            <div className="relative w-full rounded-2xl overflow-hidden bg-gradient-to-r from-[#00F2A9]/20 via-[#3A29FF]/20 to-[#FF94B4]/20 backdrop-blur-xl border border-white/50 px-5 py-3 shadow-sm">
               <div className="flex items-center gap-3">
                 <span className="text-lg">ℹ️</span>
-                <p className="text-sm text-amber-800 font-medium">
-                  <span className="font-semibold">Demo Mode:</span> This is a frontend-only demonstration. All data shown is mock/simulated — no backend is connected.
+                <p className="text-sm text-gray-700 font-medium">
+                  <span className="font-semibold text-[#3A29FF]">Demo Mode:</span> This is a frontend-only demonstration. All data shown is mock/simulated — no backend is connected.
                 </p>
               </div>
             </div>
@@ -101,7 +110,7 @@ export default function DashboardPage() {
               {/* Analytics Section */}
               <section>
                 <SectionTitle>Performance Overview</SectionTitle>
-                <GlassCard className="p-2 min-h-[400px]">
+                <GlassCard className="p-2">
                   {userId ? (
                     <AnalyticsTable userId={userId} />
                   ) : (
@@ -146,7 +155,7 @@ export default function DashboardPage() {
                 <div className="space-y-4">
                   <SectionTitle>Status</SectionTitle>
                   <GlassCard className="p-6 flex flex-col items-center justify-center bg-gradient-to-br from-blue-50/50 to-white/50">
-                    <WeatherWidget locationName={userCountry} />
+                    <WeatherWidget locationName={userCountry} onWeatherChange={handleWeatherChange} />
                   </GlassCard>
                 </div>
                 <div className="space-y-4 md:mt-10 xl:mt-0">

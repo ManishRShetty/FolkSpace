@@ -12,6 +12,47 @@ import {
 
 // --- Exported types and data for external control ---
 
+export interface WeatherGradient {
+  colorStops: [string, string, string];
+  iconColor: string;
+}
+
+// Weather-based gradient colors for dynamic backgrounds
+export const weatherGradients: Record<string, WeatherGradient> = {
+  Sunny: {
+    colorStops: ['#FFD700', '#FFA500', '#FF6347'],
+    iconColor: '#F59E0B'
+  },
+  Cloudy: {
+    colorStops: ['#94A3B8', '#64748B', '#475569'],
+    iconColor: '#64748B'
+  },
+  Snowy: {
+    colorStops: ['#E0F2FE', '#BAE6FD', '#7DD3FC'],
+    iconColor: '#38BDF8'
+  },
+  Windy: {
+    colorStops: ['#A5F3FC', '#22D3EE', '#06B6D4'],
+    iconColor: '#06B6D4'
+  },
+  Rainy: {
+    colorStops: ['#3B82F6', '#6366F1', '#8B5CF6'],
+    iconColor: '#6366F1'
+  },
+  Icy: {
+    colorStops: ['#C7D2FE', '#A5B4FC', '#818CF8'],
+    iconColor: '#818CF8'
+  },
+  'Very Cold': {
+    colorStops: ['#DBEAFE', '#BFDBFE', '#93C5FD'],
+    iconColor: '#60A5FA'
+  },
+  Default: {
+    colorStops: ['#00F2A9', '#3A29FF', '#FF94B4'],
+    iconColor: '#00C7BE'
+  },
+};
+
 export interface WeatherData {
   temperature: number;
   windspeed: number;
@@ -77,6 +118,9 @@ interface WeatherWidgetProps {
   // Use overrideWeather to manually set the state for demonstration
   // This will bypass the internal loading and fetching state
   overrideWeather?: WeatherData | null;
+
+  // Callback to report weather gradient to parent for dynamic backgrounds
+  onWeatherChange?: (gradient: WeatherGradient) => void;
 }
 
 // --- The Widget Component ---
@@ -84,6 +128,7 @@ interface WeatherWidgetProps {
 const WeatherWidget: React.FC<WeatherWidgetProps> = ({
   locationName,
   overrideWeather,
+  onWeatherChange,
 }) => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -96,11 +141,20 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({
     // --- MOCK LOGIC FOR PRESENTATION ---
     setLoading(true);
     const timer = setTimeout(() => {
+      let weatherData: WeatherData;
       if (locationName && mockDataStore[locationName]) {
-        setWeather(mockDataStore[locationName]);
+        weatherData = mockDataStore[locationName];
       } else {
-        setWeather(mockDataStore["Default"]); // Fallback to default mock
+        weatherData = mockDataStore["Default"]; // Fallback to default mock
       }
+      setWeather(weatherData);
+
+      // Report gradient to parent based on weather description
+      if (onWeatherChange) {
+        const gradient = weatherGradients[weatherData.description] || weatherGradients.Default;
+        onWeatherChange(gradient);
+      }
+
       setLoading(false);
     }, 500);
 
@@ -114,7 +168,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({
       or you could disable this useEffect entirely when overrideWeather is active.
     */
     // --- END OF REAL FETCH LOGIC ---
-  }, [locationName]);
+  }, [locationName, onWeatherChange]);
 
   // --- Render Logic ---
 

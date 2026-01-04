@@ -124,36 +124,85 @@ export function AnalyticsTable({ userId }: Props) {
     );
   }
 
-  return (
-    <div className="p-4">
-      {/* Title is handled by SectionTitle in parent usually, but we keep a subtle header if needed or remove it if redundant. 
-          The previous design had a header inside. We'll keep it simple. */}
-      {/* <h3 className="text-sm font-semibold text-gray-900 mb-6">{t('title')}</h3> */}
+  // Gradient colors for each metric card
+  const gradientColors: { [key: string]: { from: string; to: string; bg: string } } = {
+    totalRevenue: { from: '#00F2A9', to: '#00C4A3', bg: 'rgba(0, 242, 169, 0.08)' },
+    newCustomers: { from: '#3A29FF', to: '#6366F1', bg: 'rgba(58, 41, 255, 0.08)' },
+    conversionRate: { from: '#FF94B4', to: '#F472B6', bg: 'rgba(255, 148, 180, 0.08)' },
+    avgOrderValue: { from: '#F59E0B', to: '#FBBF24', bg: 'rgba(245, 158, 11, 0.08)' },
+  };
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {metrics.map((metric) => (
-          <div
-            key={metric._id}
-            className="p-5 rounded-2xl bg-[#F5F5F7] hover:bg-white border border-transparent hover:border-gray-100 hover:shadow-sm transition-all duration-300"
-          >
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide truncate">
-              {t(metric.metric)}
-            </p>
-            <p className="mt-2 text-2xl font-semibold text-[#1D1D1F] tracking-tight">
-              {metric.value}
-            </p>
-            {metric.change && (
-              <p
-                className="mt-1 text-xs flex items-center gap-1 font-medium"
-              >
-                {getChangeIcon(metric.change)}
-                <span className={metric.change.startsWith('+') ? 'text-green-600' : metric.change.startsWith('-') ? 'text-red-500' : 'text-gray-500'}>
-                  {metric.change} {t('changeSuffix')}
-                </span>
-              </p>
-            )}
-          </div>
-        ))}
+  return (
+    <div className="p-6">
+      {/* Section Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-semibold text-[#1D1D1F]">{t('title')}</h3>
+        <span className="text-xs font-medium text-gray-400 bg-gray-100/80 px-3 py-1.5 rounded-full">
+          Live Data
+        </span>
+      </div>
+
+      {/* Metrics Grid - Bento Style */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {metrics.map((metric, index) => {
+          const colors = gradientColors[metric.metric] || gradientColors.totalRevenue;
+          const isPositive = metric.change?.startsWith('+');
+          const isNegative = metric.change?.startsWith('-');
+
+          return (
+            <div
+              key={metric._id}
+              className="group relative p-6 rounded-3xl bg-white/60 backdrop-blur-sm border border-white/80 hover:bg-white hover:shadow-lg hover:shadow-gray-200/50 hover:scale-[1.02] transition-all duration-300 cursor-default overflow-hidden"
+            >
+              {/* Accent gradient bar */}
+              <div
+                className="absolute top-0 left-0 w-full h-1 opacity-80"
+                style={{ background: `linear-gradient(90deg, ${colors.from}, ${colors.to})` }}
+              />
+
+              {/* Floating gradient orb (subtle background effect) */}
+              <div
+                className="absolute -top-8 -right-8 w-24 h-24 rounded-full blur-3xl opacity-30 group-hover:opacity-50 transition-opacity"
+                style={{ background: `linear-gradient(135deg, ${colors.from}, ${colors.to})` }}
+              />
+
+              {/* Content */}
+              <div className="relative z-10">
+                {/* Metric Label */}
+                <div className="flex items-center gap-2 mb-3">
+                  <div
+                    className="w-2 h-2 rounded-full"
+                    style={{ background: `linear-gradient(135deg, ${colors.from}, ${colors.to})` }}
+                  />
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    {t(metric.metric)}
+                  </p>
+                </div>
+
+                {/* Value */}
+                <p className="text-3xl font-bold text-[#1D1D1F] tracking-tight mb-2">
+                  {metric.value}
+                </p>
+
+                {/* Change Indicator */}
+                {metric.change && (
+                  <div className="flex items-center gap-1.5">
+                    <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${isPositive
+                        ? 'bg-green-100/80 text-green-600'
+                        : isNegative
+                          ? 'bg-red-100/80 text-red-500'
+                          : 'bg-gray-100 text-gray-500'
+                      }`}>
+                      {getChangeIcon(metric.change)}
+                      <span>{metric.change}</span>
+                    </div>
+                    <span className="text-xs text-gray-400">{t('changeSuffix')}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
