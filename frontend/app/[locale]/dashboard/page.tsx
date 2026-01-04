@@ -105,7 +105,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
 
             {/* LEFT COLUMN (Main Content) */}
-            <div className="xl:col-span-8 space-y-12">
+            <div className="xl:col-span-8 space-y-10">
 
               {/* Analytics Section */}
               <section>
@@ -117,6 +117,43 @@ export default function DashboardPage() {
                     <div className="flex items-center justify-center h-64 text-gray-400 font-light">{t('loadingUserData')}</div>
                   )}
                 </GlassCard>
+              </section>
+
+              {/* Quick Actions Grid - Bento Style */}
+              <section>
+                <SectionTitle>Quick Actions</SectionTitle>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                  {/* Add Inventory - Primary/Larger */}
+                  <GlassCard className="p-6 relative overflow-hidden group hover:shadow-lg transition-all md:row-span-2">
+                    <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#00F2A9] to-[#00C7BE]" />
+                    <h4 className="text-lg font-semibold text-[#1D1D1F] mb-4">Add Inventory</h4>
+                    <AddItemForm userId={userId || undefined} onItemAdded={handleItemAdded} />
+                  </GlassCard>
+
+                  {/* AI Forecasting */}
+                  <GlassCard className="p-5 relative overflow-hidden group hover:shadow-lg transition-all">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#3A29FF] to-[#6366F1] opacity-80" />
+                    <h4 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wide">AI Forecasting</h4>
+                    <ForecastForm />
+                  </GlassCard>
+
+                  {/* Dynamic Pricing & Agent in a row */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <GlassCard className="p-4 relative overflow-hidden group hover:shadow-lg transition-all">
+                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FF94B4] to-[#F472B6] opacity-80" />
+                      <h4 className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Dynamic Pricing</h4>
+                      {userId ? <DynamicPricingForm userId={userId} /> : <div className="text-sm text-gray-400">Loading...</div>}
+                    </GlassCard>
+
+                    <GlassCard className="p-4 relative overflow-hidden group hover:shadow-lg transition-all">
+                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#F59E0B] to-[#FBBF24] opacity-80" />
+                      <h4 className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Agent Management</h4>
+                      {userId ? <AddAgentForm userId={userId} /> : <div className="text-sm text-gray-400">Loading...</div>}
+                    </GlassCard>
+                  </div>
+
+                </div>
               </section>
 
               {/* Inventory Section */}
@@ -147,56 +184,23 @@ export default function DashboardPage() {
 
             </div>
 
-            {/* RIGHT COLUMN (Sidebar) */}
-            <div className="xl:col-span-4 space-y-8 xl:sticky xl:top-8">
+            {/* RIGHT COLUMN (Sidebar - Now Compact) */}
+            <div className="xl:col-span-4 space-y-6 xl:sticky xl:top-8">
 
-              {/* Context Widgets (Weather & Alerts) */}
-              <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-6">
-                <div className="space-y-4">
-                  <SectionTitle>Status</SectionTitle>
-                  <GlassCard className="p-6 flex flex-col items-center justify-center bg-gradient-to-br from-blue-50/50 to-white/50">
-                    <WeatherWidget locationName={userCountry} onWeatherChange={handleWeatherChange} />
-                  </GlassCard>
-                </div>
-                <div className="space-y-4 md:mt-10 xl:mt-0">
-                  <div className="hidden xl:block h-6"></div>
-                  <GlassCard className="p-6 bg-gradient-to-br from-purple-50/50 to-white/50">
-                    <InventoryAlerts />
-                  </GlassCard>
-                </div>
+              {/* Weather Widget */}
+              <section>
+                <SectionTitle>Weather Status</SectionTitle>
+                <GlassCard className="p-6 flex flex-col items-center justify-center bg-gradient-to-br from-blue-50/50 to-white/50">
+                  <WeatherWidget locationName={userCountry} onWeatherChange={handleWeatherChange} />
+                </GlassCard>
               </section>
 
-              {/* Action Center */}
+              {/* Inventory Alerts */}
               <section>
-                <SectionTitle>Command Center</SectionTitle>
-                <div className="space-y-5">
-
-                  {/* Primary Action */}
-                  <GlassCard className="p-8 border-l-0 relative group cursor-pointer active:scale-[0.98] transition-all">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#00C7BE] to-[#32ADE6] opacity-80" />
-                    <h4 className="text-xl font-semibold mb-6 text-[#1D1D1F]">Add Inventory</h4>
-                    <AddItemForm userId={userId || undefined} onItemAdded={handleItemAdded} />
-                  </GlassCard>
-
-                  {/* Secondary Actions Grouped */}
-                  <div className="grid gap-5">
-                    <GlassCard className="p-6 hover:bg-white transition-colors">
-                      <h4 className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wider">AI Forecasting</h4>
-                      <ForecastForm />
-                    </GlassCard>
-
-                    <GlassCard className="p-6 hover:bg-white transition-colors">
-                      <h4 className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wider">Dynamic Pricing</h4>
-                      {userId ? <DynamicPricingForm userId={userId} /> : <div className="text-sm text-gray-400">Loading...</div>}
-                    </GlassCard>
-
-                    <GlassCard className="p-6 hover:bg-white transition-colors">
-                      <h4 className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wider">Agent Management</h4>
-                      {userId ? <AddAgentForm userId={userId} /> : <div className="text-sm text-gray-400">Loading...</div>}
-                    </GlassCard>
-                  </div>
-
-                </div>
+                <SectionTitle>Alerts</SectionTitle>
+                <GlassCard className="p-6 bg-gradient-to-br from-purple-50/50 to-white/50">
+                  <InventoryAlerts />
+                </GlassCard>
               </section>
 
             </div>
