@@ -16,13 +16,13 @@ interface LocationSwitcherProps {
   onLocationChange: (location: Location) => void;
 }
 
+// Nordic countries only - these match the WeatherWidget mock data
 const locations = [
-  { name: "Global", flag: "🌍" },
-  { name: "New York, USA", flag: "🇺🇸" },
-  { name: "London, UK", flag: "🇬🇧" },
-  { name: "Tokyo, Japan", flag: "🇯🇵" },
-  { name: "Berlin, Germany", flag: "🇩🇪" },
-  { name: "Copenhagen, Denmark", flag: "🇩🇰" },
+  { name: "Norway", flag: "🇳🇴" },
+  { name: "Sweden", flag: "🇸🇪" },
+  { name: "Finland", flag: "🇫🇮" },
+  { name: "Denmark", flag: "🇩🇰" },
+  { name: "Iceland", flag: "🇮🇸" },
 ];
 
 export default function LocationSwitcher({
@@ -56,8 +56,8 @@ export default function LocationSwitcher({
                 type="button"
                 onClick={() => onLocationChange(loc)}
                 className={`flex items-center w-full px-4 py-2.5 text-left transition-colors ${selectedLocation?.name === loc.name
-                    ? "bg-gray-50 text-blue-600 font-medium"
-                    : "text-gray-700 hover:bg-gray-50"
+                  ? "bg-gray-50 text-blue-600 font-medium"
+                  : "text-gray-700 hover:bg-gray-50"
                   }`}
               >
                 <span className="mr-3 text-lg leading-none">{loc.flag}</span>

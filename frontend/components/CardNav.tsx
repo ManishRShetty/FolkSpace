@@ -65,30 +65,37 @@ const CardNav: React.FC<CardNavProps> = ({
       links: [{ label: "Manage Billing", href: "/billing", ariaLabel: "Manage Billing" }],
     },
     {
-      label: "Supply Chain",
+      label: "Inventory",
       bgColor: "#dbeafe", // blue-100
       textColor: "#1e40af", // blue-800
-      links: [{ label: "Contact Support", href: "/support", ariaLabel: "Contact Support" }],
+      links: [{ label: "View Inventory", href: "/inventory", ariaLabel: "View Inventory" }],
     },
   ];
 
   // --- 4. DEFINE STATE INTERNALLY ---
 
   const [selectedLocation, setSelectedLocation] = useState<Location>({
-    name: "Global",
-    flag: "🌍",
+    name: "Norway",
+    flag: "🇳🇴",
   });
+
+  // Load location from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('folkspace-location');
+    if (saved) {
+      try {
+        setSelectedLocation(JSON.parse(saved));
+      } catch (e) {
+        // ignore parse errors
+      }
+    }
+  }, []);
 
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
   // This state is now only for the language switcher
   const [activeDropdown, setActiveDropdown] = useState<"language" | "location" | null>(null);
-  // The selectedLocation state above is now used for LocationSwitcher
-  // const [selectedLocation, setSelectedLocation] = useState<Location>({
-  //   name: "Global",
-  //   flag: "🌍",
-  // });
 
   const navRef = useRef<HTMLDivElement | null>(null);
   const cardsRef = useRef<HTMLDivElement[]>([]);
@@ -107,6 +114,16 @@ const CardNav: React.FC<CardNavProps> = ({
   const onLocationChange = (location: Location) => {
     setSelectedLocation(location);
     setActiveDropdown(null);
+
+    // Persist to localStorage
+    if (location) {
+      localStorage.setItem('folkspace-location', JSON.stringify(location));
+    }
+
+    // Dispatch custom event so dashboard can update
+    window.dispatchEvent(new CustomEvent('folkspace-location-change', {
+      detail: location
+    }));
   };
 
   const toggleLanguage = () => {

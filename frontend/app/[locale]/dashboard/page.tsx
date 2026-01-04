@@ -54,7 +54,32 @@ export default function DashboardPage() {
     const info = getUserInfo();
     setUserId(id);
     setUserInfo(info);
-    if (info?.region) setUserCountry(info.region);
+
+    // Load location from localStorage (set by navbar)
+    const savedLocation = localStorage.getItem('folkspace-location');
+    if (savedLocation) {
+      try {
+        const loc = JSON.parse(savedLocation);
+        if (loc?.name) setUserCountry(loc.name);
+      } catch (e) {
+        // ignore parse errors
+      }
+    } else if (info?.region) {
+      setUserCountry(info.region);
+    }
+
+    // Listen for location changes from navbar
+    const handleLocationChange = (event: CustomEvent) => {
+      if (event.detail?.name) {
+        setUserCountry(event.detail.name);
+      }
+    };
+
+    window.addEventListener('folkspace-location-change', handleLocationChange as EventListener);
+
+    return () => {
+      window.removeEventListener('folkspace-location-change', handleLocationChange as EventListener);
+    };
   }, []);
 
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -138,20 +163,19 @@ export default function DashboardPage() {
                     <ForecastForm />
                   </GlassCard>
 
-                  {/* Dynamic Pricing & Agent in a row */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <GlassCard className="p-4 relative overflow-hidden group hover:shadow-lg transition-all">
-                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FF94B4] to-[#F472B6] opacity-80" />
-                      <h4 className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Dynamic Pricing</h4>
-                      {userId ? <DynamicPricingForm userId={userId} /> : <div className="text-sm text-gray-400">Loading...</div>}
-                    </GlassCard>
+                  {/* Dynamic Pricing */}
+                  <GlassCard className="p-5 relative overflow-hidden group hover:shadow-lg transition-all">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FF94B4] to-[#F472B6] opacity-80" />
+                    <h4 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wide">Dynamic Pricing</h4>
+                    {userId ? <DynamicPricingForm userId={userId} /> : <div className="text-sm text-gray-400">Loading...</div>}
+                  </GlassCard>
 
-                    <GlassCard className="p-4 relative overflow-hidden group hover:shadow-lg transition-all">
-                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#F59E0B] to-[#FBBF24] opacity-80" />
-                      <h4 className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Agent Management</h4>
-                      {userId ? <AddAgentForm userId={userId} /> : <div className="text-sm text-gray-400">Loading...</div>}
-                    </GlassCard>
-                  </div>
+                  {/* Agent Management */}
+                  <GlassCard className="p-5 relative overflow-hidden group hover:shadow-lg transition-all">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#F59E0B] to-[#FBBF24] opacity-80" />
+                    <h4 className="text-sm font-bold text-gray-500 mb-3 uppercase tracking-wide">Agent Management</h4>
+                    {userId ? <AddAgentForm userId={userId} /> : <div className="text-sm text-gray-400">Loading...</div>}
+                  </GlassCard>
 
                 </div>
               </section>
