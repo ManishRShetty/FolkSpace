@@ -80,6 +80,18 @@ export default function DashboardPage() {
             </div>
           </div>
 
+          {/* --- Demo Notice Banner --- */}
+          <div className="mb-8 px-2">
+            <div className="relative w-full rounded-xl overflow-hidden bg-gradient-to-r from-amber-50/90 to-orange-50/90 backdrop-blur-xl border border-amber-200/50 px-5 py-3 shadow-sm">
+              <div className="flex items-center gap-3">
+                <span className="text-lg">ℹ️</span>
+                <p className="text-sm text-amber-800 font-medium">
+                  <span className="font-semibold">Demo Mode:</span> This is a frontend-only demonstration. All data shown is mock/simulated — no backend is connected.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* --- Main Grid Layout --- */}
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
 

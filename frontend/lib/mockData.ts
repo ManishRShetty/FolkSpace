@@ -1,4 +1,13 @@
-// Mock data for frontend development without backend
+/**
+ * ⚠️ MOCK DATA NOTICE
+ * 
+ * This file contains mock/demo data for demonstration purposes only.
+ * Only the frontend portion of this project was developed.
+ * No actual backend or database is connected - all data shown is simulated.
+ * 
+ * For viewers: The data displayed in the dashboard is not real and is intended
+ * to showcase the UI/UX design and frontend functionality.
+ */
 
 export const USE_MOCK_DATA = true; // Toggle this to switch between mock and real API
 
