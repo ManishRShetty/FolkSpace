@@ -76,7 +76,7 @@ const CardNav: React.FC<CardNavProps> = ({
 
   const [selectedLocation, setSelectedLocation] = useState<Location>({
     name: "Norway",
-    flag: "🇳🇴",
+    code: "NO",
   });
 
   // Load location from localStorage on mount

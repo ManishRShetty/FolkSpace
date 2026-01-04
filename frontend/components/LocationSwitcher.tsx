@@ -2,11 +2,12 @@
 
 import React from "react";
 import { ChevronDown } from "lucide-react";
+import Flag from "react-world-flags";
 
 // Define the Location type to match usage in CardNav
 export type Location = {
   name: string;
-  flag: string;
+  code: string; // ISO country code for flag
 } | null;
 
 interface LocationSwitcherProps {
@@ -18,11 +19,11 @@ interface LocationSwitcherProps {
 
 // Nordic countries only - these match the WeatherWidget mock data
 const locations = [
-  { name: "Norway", flag: "🇳🇴" },
-  { name: "Sweden", flag: "🇸🇪" },
-  { name: "Finland", flag: "🇫🇮" },
-  { name: "Denmark", flag: "🇩🇰" },
-  { name: "Iceland", flag: "🇮🇸" },
+  { name: "Norway", code: "NO" },
+  { name: "Sweden", code: "SE" },
+  { name: "Finland", code: "FI" },
+  { name: "Denmark", code: "DK" },
+  { name: "Iceland", code: "IS" },
 ];
 
 export default function LocationSwitcher({
@@ -39,8 +40,10 @@ export default function LocationSwitcher({
         className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none transition-colors"
         aria-expanded={isOpen}
       >
-        <span className="text-lg leading-none">{selectedLocation?.flag || "🌍"}</span>
-        <span className="leading-none">{selectedLocation?.name || "Global"}</span>
+        <span className="w-5 h-4 overflow-hidden rounded-sm shadow-sm">
+          <Flag code={selectedLocation?.code || "NO"} className="w-full h-full object-cover" />
+        </span>
+        <span className="leading-none">{selectedLocation?.name || "Norway"}</span>
         <ChevronDown
           className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
             }`}
@@ -60,7 +63,9 @@ export default function LocationSwitcher({
                   : "text-gray-700 hover:bg-gray-50"
                   }`}
               >
-                <span className="mr-3 text-lg leading-none">{loc.flag}</span>
+                <span className="mr-3 w-6 h-4 overflow-hidden rounded-sm shadow-sm">
+                  <Flag code={loc.code} className="w-full h-full object-cover" />
+                </span>
                 {loc.name}
               </button>
             ))}
